@@ -21,11 +21,11 @@ syntax tree of sorts and then executes it.
 Currently supported statements
 ------------------------------
 
-+ Assignment (<variable> iz <variable/value>; <variable> to /dev/null)
-+ Char output (rofl <variable>)
++ Assignment (*variable* iz *variable/value*; *variable* to /dev/null)
++ Char output (rofl *variable*)
 + Infinite loop (rtfm ... brb)
 + Loop break (tldr)
 + Comments (w00t)
 + Program exit (stfu)
-+ Incrementing / decrementing (lmao/roflmao <variable>)
-+ Conditions (wtf <variable> iz liek <value> ... brb; currently only this variant)
++ Incrementing / decrementing (lmao/roflmao *variable*)
++ Conditions (wtf *variable* iz liek *value* ... brb; currently only this variant)
