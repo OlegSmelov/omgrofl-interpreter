@@ -45,16 +45,19 @@ public class ScriptParser {
     
     public Script parse(File input, Memory memory) throws FileNotFoundException, ScriptParseException {
         Scanner scanner = new Scanner(input);
-        return parse(scanner, memory);
+        CommandSequence commandSequence = parseSequence(scanner, memory);
+        return new Script(commandSequence);
     }
     
     public Script parse(String input, Memory memory) throws ScriptParseException {
         Scanner scanner = new Scanner(input);
-        return parse(scanner, memory);
+        CommandSequence commandSequence = parseSequence(scanner, memory);
+        return new Script(commandSequence);
     }
     
-    private Script parse(Scanner scanner, Memory memory) throws ScriptParseException {
-        Script script = new Script();
+    private CommandSequence parseSequence(Scanner scanner, Memory memory)
+            throws ScriptParseException {
+        CommandSequence script = new CommandSequence();
         ParameterFactory parameterFactory = new ParameterFactory();
         
         while (scanner.hasNextLine()) {
@@ -75,8 +78,8 @@ public class ScriptParser {
                 continue;
             else if (commandName.equalsIgnoreCase(Globals.loopOperator)) {
                 // infinite loop (until broken)
-                Script loopScript = parse(scanner, memory);
-                InfiniteLoopCommand loop = new InfiniteLoopCommand(loopScript);
+                CommandSequence loopCommandSequence = parseSequence(scanner, memory);
+                InfiniteLoopCommand loop = new InfiniteLoopCommand(loopCommandSequence);
                 script.addCommand(loop);
             } else if (commandName.toLowerCase().matches(Globals.variablePattern)) {
                 String varName = commandName;
@@ -167,8 +170,8 @@ public class ScriptParser {
                 if (!Globals.validValue(integerValue))
                     throw new ScriptParseException("Unacceptable value: " + integerValue);
                 
-                Script conditionScript = parse(scanner, memory);
-                ConditionCommand command = new ConditionCommand(variable, integerValue, conditionScript);
+                CommandSequence conditionCommandSequence = parseSequence(scanner, memory);
+                ConditionCommand command = new ConditionCommand(variable, integerValue, conditionCommandSequence);
                 
                 script.addCommand(command);
             } else {

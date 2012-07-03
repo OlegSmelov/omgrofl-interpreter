@@ -1,40 +1,22 @@
 package omgrofl.interpreter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
+import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
 public class Script {
     
-    List<Command> commands = new ArrayList<Command>();
-    
-    public void addCommand(Command command) {
-        commands.add(command);
-    }
-    
-    public void addCommands(Collection<Command> commands) {
-        this.commands.addAll(commands);
-    }
-    
-    public void clearCommands() {
-        commands.clear();
-    }
-    
-    public void run() throws ScriptInterruptedException, ScriptExitException {
-        for (Command command : commands)
-            command.execute();
-    }
+    protected CommandSequence commandSequence;
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        
-        for (Command command : commands) {
-            sb.append(command.toString());
-            sb.append("\n");
+    Script(CommandSequence commandSequence) {
+        this.commandSequence = commandSequence;
+    }
+    
+    public void run() throws ScriptRuntimeException {
+        try {
+            commandSequence.run();
+        } catch (ScriptInterruptedException e) {
+        } catch (ScriptExitException e) {
         }
-        return sb.toString();
     }
 }

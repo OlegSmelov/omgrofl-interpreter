@@ -5,9 +5,8 @@ import java.io.IOException;
 import omgrofl.interpreter.Memory;
 import omgrofl.interpreter.Script;
 import omgrofl.interpreter.ScriptParser;
-import omgrofl.interpreter.exceptions.ScriptExitException;
-import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 import omgrofl.interpreter.exceptions.ScriptParseException;
+import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
 public class Main {
     
@@ -22,11 +21,9 @@ public class Main {
             //System.out.println(script);
             script.run();
         } catch (ScriptParseException e) {
-            System.err.println(e);
-        } catch (ScriptInterruptedException e) {
-            System.err.println(e);
-        } catch (ScriptExitException e) {
-            // 
+            e.printStackTrace();
+        } catch (ScriptRuntimeException e) {
+            e.printStackTrace();
         }
         
         System.out.println();

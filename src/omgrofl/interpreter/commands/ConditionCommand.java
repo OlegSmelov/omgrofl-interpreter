@@ -1,8 +1,8 @@
 package omgrofl.interpreter.commands;
 
 import omgrofl.interpreter.Command;
+import omgrofl.interpreter.CommandSequence;
 import omgrofl.interpreter.Globals;
-import omgrofl.interpreter.Script;
 import omgrofl.interpreter.Variable;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
@@ -11,9 +11,9 @@ public class ConditionCommand implements Command {
     
     protected Variable variable;
     protected Object value;
-    protected Script script;
+    protected CommandSequence script;
 
-    public ConditionCommand(Variable variable, Object value, Script script) {
+    public ConditionCommand(Variable variable, Object value, CommandSequence script) {
         this.variable = variable;
         this.value = value;
         this.script = script;
