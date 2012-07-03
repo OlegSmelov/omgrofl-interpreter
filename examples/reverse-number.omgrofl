@@ -1,28 +1,11 @@
-w00t outputs the alphabet
+w00t reverse the number
 
-lol iz 97
-lool iz 26
-
-rtfm
- wtf lool iz liek 0
-  tldr
- brb
- rofl lol
- lmao lol
- roflmao lool
-brb
-
-w00t endline
-lol iz 13
-rofl lol
-
-w00t reverse the number (very ineffectively)
 lol iz 23
 
-w00t lol - original number
-w00t lool - copy of the original number
-w00t loool - loop counter (10)
-w00t looool - mod 10
+w00t lol     - original number
+w00t lool    - copy of the original number
+w00t loool   - loop counter (10)
+w00t looool  - mod 10
 w00t loooool - div 10
 
 loooool iz lol

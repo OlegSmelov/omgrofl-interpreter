@@ -11,7 +11,7 @@ import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 public class Main {
     
     public static void main(String[] args) throws IOException {
-        File input = new File("input.txt");
+        File input = new File("examples/reverse-number.omgrofl");
         
         ScriptParser scriptParser = new ScriptParser();
         Memory memory = new Memory();
