@@ -1,9 +1,9 @@
 package omgrofl.interpreter.procedures;
 
-import omgrofl.interpreter.Procedure;
 import java.util.ArrayList;
 import java.util.List;
 import omgrofl.interpreter.Parameter;
+import omgrofl.interpreter.Procedure;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
 public abstract class AbstractProcedure implements Procedure {

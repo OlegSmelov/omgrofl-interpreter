@@ -14,4 +14,9 @@ public class Memory {
     public Object getVariable(String name) {
         return variables.get(name);
     }
+
+    @Override
+    public String toString() {
+        return variables.toString();
+    }
 }
