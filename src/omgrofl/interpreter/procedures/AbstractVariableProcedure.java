@@ -1,5 +1,6 @@
 package omgrofl.interpreter.procedures;
 
+import omgrofl.interpreter.Globals;
 import omgrofl.interpreter.Parameter;
 import omgrofl.interpreter.Variable;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
@@ -16,7 +17,7 @@ public abstract class AbstractVariableProcedure extends AbstractProcedure {
             Object value = variable.getValue();
             
             if (value instanceof Integer)
-                variable.setValue((Integer) value + amount);
+                variable.setValue(Globals.adjustValue((Integer) value + amount));
             else
                 throw new ScriptRuntimeException("unknown variable type");
             

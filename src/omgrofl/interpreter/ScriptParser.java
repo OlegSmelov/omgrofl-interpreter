@@ -16,7 +16,7 @@ public class ScriptParser {
     private Variable readVariable(Memory memory, Scanner scanner) throws ScriptParseException {
         try {
             String variableName = scanner.next();
-            if (!variableName.matches(Globals.variablePattern)) {
+            if (!variableName.toLowerCase().matches(Globals.variablePattern)) {
                 throw new ScriptParseException(variableName
                         + " is not a valid variable name");
             }
@@ -38,7 +38,7 @@ public class ScriptParser {
     }
     
     private void expect(String value, String expected) throws ScriptParseException {
-        if (!value.equals(expected))
+        if (!value.equalsIgnoreCase(expected))
             throw new ScriptParseException(expected + " expected, "
                     + value + " found");
     }
@@ -67,18 +67,18 @@ public class ScriptParser {
             
             String commandName = lineScanner.next();
             
-            if (commandName.equals(Globals.endOperator))
+            if (commandName.equalsIgnoreCase(Globals.endOperator))
                 // end of script
                 break;
-            else if (commandName.equals(Globals.commentOperator))
+            else if (commandName.equalsIgnoreCase(Globals.commentOperator))
                 // comment
                 continue;
-            else if (commandName.equals(Globals.loopOperator)) {
+            else if (commandName.equalsIgnoreCase(Globals.loopOperator)) {
                 // infinite loop (until broken)
                 Script loopScript = parse(scanner, memory);
                 InfiniteLoopCommand loop = new InfiniteLoopCommand(loopScript);
                 script.addCommand(loop);
-            } else if (commandName.matches(Globals.variablePattern)) {
+            } else if (commandName.toLowerCase().matches(Globals.variablePattern)) {
                 String varName = commandName;
                 
                 Variable variable = new Variable(memory, varName);
@@ -89,17 +89,19 @@ public class ScriptParser {
                     String value = lineScanner.next();
                     Integer newValue;
                     
-                    if (operator.equals("iz")) {
-                        if (value.matches(Globals.numberPattern)) {
+                    if (operator.equalsIgnoreCase("iz")) {
+                        if (value.toLowerCase().matches(Globals.numberPattern)) {
                             newValue = Integer.parseInt(value);
+                            if (!Globals.validValue(newValue))
+                                throw new ScriptParseException("Unacceptable value: " + newValue);
                             valueParameter = parameterFactory.getParameter(newValue);
-                        } else if (value.matches(Globals.variablePattern)) {
+                        } else if (value.toLowerCase().matches(Globals.variablePattern)) {
                             Variable paramVariable = new Variable(memory, value);
                             valueParameter = parameterFactory.getParameter(paramVariable);
                         } else {
                             throw new ScriptParseException("Unrecognized operand " + value);
                         }
-                    } else if (operator.equals("to") && value.equals("/dev/null")) {
+                    } else if (operator.equalsIgnoreCase("to") && value.equalsIgnoreCase("/dev/null")) {
                         newValue = 0;
                         valueParameter = parameterFactory.getParameter(newValue);
                     } else {
@@ -113,15 +115,15 @@ public class ScriptParser {
                 AssignmentCommand assignmentCommand = new AssignmentCommand(variable, valueParameter);
                 script.addCommand(assignmentCommand);
                 
-            } else if (commandName.equals(Globals.breakOperator)) {
+            } else if (commandName.equalsIgnoreCase(Globals.breakOperator)) {
                 BreakCommand breakCommand = new BreakCommand();
                 script.addCommand(breakCommand);
-            } else if (commandName.equals(Globals.printCharacterOperator)) {
+            } else if (commandName.equalsIgnoreCase(Globals.printCharacterOperator)) {
                 
                 try {
                     String variableName = lineScanner.next();
                     
-                    if (!variableName.matches(Globals.variablePattern))
+                    if (!variableName.toLowerCase().matches(Globals.variablePattern))
                         throw new ScriptParseException(variableName
                                 + " is not a valid variable name");
                     
@@ -137,24 +139,24 @@ public class ScriptParser {
                 } catch (NoSuchElementException e) {
                     throw new ScriptParseException("Missing operands");
                 }
-            } else if (commandName.equals(Globals.exitOperator)) {
+            } else if (commandName.equalsIgnoreCase(Globals.exitOperator)) {
                 ExitCommand exitCommand = new ExitCommand();
                 script.addCommand(exitCommand);
-            } else if (commandName.equals(Globals.incrementVariableOperator)) {
+            } else if (commandName.equalsIgnoreCase(Globals.incrementVariableOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
                 IncrementVariableProcedure procedure = new IncrementVariableProcedure();
                 procedure.addParameter(parameterFactory.getParameter(variable));
                 CallProcedureCommand command = new CallProcedureCommand(procedure);
 
                 script.addCommand(command);
-            } else if (commandName.equals(Globals.decrementVariableOperator)) {
+            } else if (commandName.equalsIgnoreCase(Globals.decrementVariableOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
                 DecrementVariableProcedure procedure = new DecrementVariableProcedure();
                 procedure.addParameter(parameterFactory.getParameter(variable));
                 CallProcedureCommand command = new CallProcedureCommand(procedure);
 
                 script.addCommand(command);
-            } else if (commandName.equals(Globals.conditionOperator)) {
+            } else if (commandName.equalsIgnoreCase(Globals.conditionOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
                 expect(readNext(lineScanner), "iz");
                 String comparison = readNext(lineScanner);
@@ -162,6 +164,8 @@ public class ScriptParser {
                 
                 String value = readNext(lineScanner);
                 Integer integerValue = Integer.parseInt(value);
+                if (!Globals.validValue(integerValue))
+                    throw new ScriptParseException("Unacceptable value: " + integerValue);
                 
                 Script conditionScript = parse(scanner, memory);
                 ConditionCommand command = new ConditionCommand(variable, integerValue, conditionScript);

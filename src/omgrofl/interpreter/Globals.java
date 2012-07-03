@@ -16,6 +16,18 @@ public class Globals {
     public static final String decrementVariableOperator = "roflmao";
     public static final String conditionOperator = "wtf";
     
+    public static final int minAllowedValue = 0;
+    public static final int maxAllowedValue = 255;
+    
+    public static boolean validValue(int value) {
+        return (value >= minAllowedValue)
+                && (value <= maxAllowedValue);
+    }
+    
+    public static int adjustValue(int value) {
+        return value & maxAllowedValue;
+    }
+    
     public static String indent(String text) {
         Scanner scanner = new Scanner(text);
         StringBuilder stringBuilder = new StringBuilder();

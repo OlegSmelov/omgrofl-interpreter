@@ -11,7 +11,7 @@ public class Variable {
     }
     
     public Object getValue() {
-        return memory.getVariable(name);
+        return memory.getVariable(name.toLowerCase());
     }
     
     public String getName() {
@@ -19,6 +19,6 @@ public class Variable {
     }
     
     public void setValue(Object value) {
-        memory.setVariable(name, value);
+        memory.setVariable(name.toLowerCase(), value);
     }
 }
