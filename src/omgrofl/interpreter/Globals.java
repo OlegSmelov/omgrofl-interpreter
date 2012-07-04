@@ -16,6 +16,10 @@ public class Globals {
     public static final String decrementVariableOperator = "roflmao";
     public static final String conditionOperator = "wtf";
     
+    public static final String stackPushOperator = "n00b";
+    public static final String stackPopOperator = "l33t";
+    public static final String dequeueOperator = "haxor";
+    
     public static final int minAllowedValue = 0;
     public static final int maxAllowedValue = 255;
     

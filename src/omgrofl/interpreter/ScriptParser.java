@@ -73,14 +73,17 @@ public class ScriptParser {
             if (commandName.equalsIgnoreCase(Globals.endOperator))
                 // end of script
                 break;
+            
             else if (commandName.equalsIgnoreCase(Globals.commentOperator))
                 // comment
                 continue;
+            
             else if (commandName.equalsIgnoreCase(Globals.loopOperator)) {
                 // infinite loop (until broken)
                 CommandSequence loopCommandSequence = parseSequence(scanner, memory);
                 InfiniteLoopCommand loop = new InfiniteLoopCommand(loopCommandSequence);
                 script.addCommand(loop);
+                
             } else if (commandName.toLowerCase().matches(Globals.variablePattern)) {
                 String varName = commandName;
                 
@@ -121,6 +124,7 @@ public class ScriptParser {
             } else if (commandName.equalsIgnoreCase(Globals.breakOperator)) {
                 BreakCommand breakCommand = new BreakCommand();
                 script.addCommand(breakCommand);
+                
             } else if (commandName.equalsIgnoreCase(Globals.printCharacterOperator)) {
                 
                 try {
@@ -142,6 +146,7 @@ public class ScriptParser {
                 } catch (NoSuchElementException e) {
                     throw new ScriptParseException("Missing operands");
                 }
+                
             } else if (commandName.equalsIgnoreCase(Globals.exitOperator)) {
                 ExitCommand exitCommand = new ExitCommand();
                 script.addCommand(exitCommand);
@@ -152,6 +157,7 @@ public class ScriptParser {
                 CallProcedureCommand command = new CallProcedureCommand(procedure);
 
                 script.addCommand(command);
+                
             } else if (commandName.equalsIgnoreCase(Globals.decrementVariableOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
                 DecrementVariableProcedure procedure = new DecrementVariableProcedure();
@@ -159,6 +165,7 @@ public class ScriptParser {
                 CallProcedureCommand command = new CallProcedureCommand(procedure);
 
                 script.addCommand(command);
+                
             } else if (commandName.equalsIgnoreCase(Globals.conditionOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
                 expect(readNext(lineScanner), "iz");
@@ -174,6 +181,25 @@ public class ScriptParser {
                 ConditionCommand command = new ConditionCommand(variable, integerValue, conditionCommandSequence);
                 
                 script.addCommand(command);
+                
+            } else if (commandName.equalsIgnoreCase(Globals.stackPushOperator)) {
+                Variable variable = readVariable(memory, lineScanner);
+                Command command = new StackPushCommand(variable, memory);
+                
+                script.addCommand(command);
+            
+            } else if (commandName.equalsIgnoreCase(Globals.stackPopOperator)) {
+                Variable variable = readVariable(memory, lineScanner);
+                Command command = new StackPopCommand(variable, memory);
+                
+                script.addCommand(command);
+            
+            } else if (commandName.equalsIgnoreCase(Globals.dequeueOperator)) {
+                Variable variable = readVariable(memory, lineScanner);
+                Command command = new DequeueCommand(variable, memory);
+                
+                script.addCommand(command);
+                
             } else {
                 throw new ScriptParseException("Unknown command " + commandName);
             }

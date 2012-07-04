@@ -29,3 +29,4 @@ Currently supported statements
 + Program exit (stfu)
 + Incrementing / decrementing (lmao/roflmao *variable*)
 + Conditions (wtf *variable* iz liek *value* ... brb; currently only this variant)
++ Stack/Queue (n00b/l33t/haxor *variable*)
