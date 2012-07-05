@@ -28,5 +28,5 @@ Currently supported statements
 + Comments (w00t)
 + Program exit (stfu)
 + Incrementing / decrementing (lmao/roflmao *variable*)
-+ Conditions (wtf *variable* iz liek *value* ... brb; currently only this variant)
++ Conditions (wtf *variable/value* iz (nope) liek/uber *variable/value* ... brb)
 + Stack/Queue (n00b/l33t/haxor *variable*)
