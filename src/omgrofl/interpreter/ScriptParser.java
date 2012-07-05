@@ -37,7 +37,10 @@ public class ScriptParser {
         } else if (name.matches(Globals.numberPattern)) {
             try {
                 Integer integerValue = Integer.parseInt(name);
-                return parameterFactory.getParameter(integerValue);
+                if (Globals.validValue(integerValue))
+                    return parameterFactory.getParameter(integerValue);
+                else
+                    throw new ScriptParseException("Invalid value: " + integerValue);
             } catch (NumberFormatException e) {
                 throw new ScriptParseException("Wrong number format: " + name);
             }
@@ -170,8 +173,20 @@ public class ScriptParser {
                 script.addCommand(command);
                 
             } else if (commandName.equalsIgnoreCase(Globals.exitOperator)) {
-                ExitCommand exitCommand = new ExitCommand();
-                script.addCommand(exitCommand);
+                Command command = new ExitCommand();
+                script.addCommand(command);
+                
+            } else if (commandName.equalsIgnoreCase(Globals.sleepOperator)) {
+                try {
+                    String durationString = lineScanner.next();
+                    Parameter durationParameter = getParameter(parameterFactory, memory, durationString);
+                    Command command = new SleepCommand(durationParameter);
+                    script.addCommand(command);
+                    
+                } catch (NoSuchElementException e) {
+                    throw new ScriptParseException("Missing operands");
+                }
+                
             } else if (commandName.equalsIgnoreCase(Globals.incrementVariableOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
                 IncrementVariableProcedure procedure = new IncrementVariableProcedure();

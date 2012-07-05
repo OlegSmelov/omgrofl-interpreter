@@ -27,6 +27,7 @@ Currently supported statements
 + Infinite loop (rtfm ... brb)
 + Loop break (tldr)
 + Comments (w00t)
++ Sleep (afk *variable/value*)
 + Program exit (stfu)
 + Incrementing / decrementing (lmao/roflmao *variable*)
 + Conditions (wtf *variable/value* iz (nope) liek/uber *variable/value* ... brb)
