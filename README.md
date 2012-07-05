@@ -23,6 +23,7 @@ Currently supported statements
 
 + Assignment (*variable* iz *variable/value*; *variable* to /dev/null)
 + Char output (rofl *variable*)
++ Char input (stfw *variable*)
 + Infinite loop (rtfm ... brb)
 + Loop break (tldr)
 + Comments (w00t)

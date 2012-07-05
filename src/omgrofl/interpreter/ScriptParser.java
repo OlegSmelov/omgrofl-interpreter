@@ -163,6 +163,12 @@ public class ScriptParser {
                     throw new ScriptParseException("Missing operands");
                 }
                 
+            } else if (commandName.equalsIgnoreCase(Globals.readCharacterOperator)) {
+                
+                Variable variable = readVariable(memory, lineScanner);
+                Command command = new ReadCharacterCommand(variable);
+                script.addCommand(command);
+                
             } else if (commandName.equalsIgnoreCase(Globals.exitOperator)) {
                 ExitCommand exitCommand = new ExitCommand();
                 script.addCommand(exitCommand);
