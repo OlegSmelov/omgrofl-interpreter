@@ -6,7 +6,7 @@ Omgrofl interpreter
 About
 -----
 
-This projects aims to create a fully-functional interpreter of an esoteric
+This project aims to create a fully-functional interpreter of an esoteric
 programming language called Omgrofl. More information on the language itself
 can be found here: http://esolangs.org/wiki/Omgrofl
 
