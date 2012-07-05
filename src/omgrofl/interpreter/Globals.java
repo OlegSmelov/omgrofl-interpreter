@@ -20,6 +20,11 @@ public class Globals {
     public static final String stackPopOperator = "l33t";
     public static final String dequeueOperator = "haxor";
     
+    public static final String isOperator = "iz";
+    public static final String negationOperator = "nope";
+    public static final String equalsOperator = "liek";
+    public static final String greaterOperator = "uber";
+    
     public static final int minAllowedValue = 0;
     public static final int maxAllowedValue = 255;
     

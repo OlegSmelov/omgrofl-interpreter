@@ -19,4 +19,9 @@ public class Script {
         } catch (ScriptExitException e) {
         }
     }
+
+    @Override
+    public String toString() {
+        return commandSequence.toString();
+    }
 }

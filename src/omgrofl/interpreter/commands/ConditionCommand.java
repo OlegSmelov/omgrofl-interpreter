@@ -2,34 +2,31 @@ package omgrofl.interpreter.commands;
 
 import omgrofl.interpreter.Command;
 import omgrofl.interpreter.CommandSequence;
+import omgrofl.interpreter.Condition;
 import omgrofl.interpreter.Globals;
-import omgrofl.interpreter.Variable;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 
 public class ConditionCommand implements Command {
     
-    protected Variable variable;
-    protected Object value;
-    protected CommandSequence script;
+    protected Condition condition;
+    protected CommandSequence commandSequence;
 
-    public ConditionCommand(Variable variable, Object value, CommandSequence script) {
-        this.variable = variable;
-        this.value = value;
-        this.script = script;
+    public ConditionCommand(Condition condition, CommandSequence commandSequence) {
+        this.condition = condition;
+        this.commandSequence = commandSequence;
     }
 
     @Override
     public void execute() throws ScriptInterruptedException, ScriptExitException {
-        if (value.equals(variable.getValue()))
-            script.run();
+        if (condition.evaluate())
+            commandSequence.run();
     }
 
     @Override
     public String toString() {
-        return Globals.conditionOperator + " " + variable.getName() + " iz liek "
-                + String.valueOf(value) + "\n"
-                + Globals.indent(script.toString())
+        return Globals.conditionOperator + " " + condition.toString() + "\n"
+                + Globals.indent(commandSequence.toString())
                 + Globals.endOperator;
     }
 }

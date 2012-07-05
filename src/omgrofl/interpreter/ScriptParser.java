@@ -29,6 +29,22 @@ public class ScriptParser {
         }
     }
     
+    private Parameter getParameter(ParameterFactory parameterFactory, Memory memory,
+            String name) throws ScriptParseException {
+        if (name.toLowerCase().matches(Globals.variablePattern)) {
+            Variable variable = new Variable(memory, name);
+            return parameterFactory.getParameter(variable);
+        } else if (name.matches(Globals.numberPattern)) {
+            try {
+                Integer integerValue = Integer.parseInt(name);
+                return parameterFactory.getParameter(integerValue);
+            } catch (NumberFormatException e) {
+                throw new ScriptParseException("Wrong number format: " + name);
+            }
+        } else
+            throw new ScriptParseException("Invalid parameter: " + name);
+    }
+    
     public String readNext(Scanner scanner) throws ScriptParseException {
         try {
             return scanner.next();
@@ -95,7 +111,7 @@ public class ScriptParser {
                     String value = lineScanner.next();
                     Integer newValue;
                     
-                    if (operator.equalsIgnoreCase("iz")) {
+                    if (operator.equalsIgnoreCase(Globals.isOperator)) {
                         if (value.toLowerCase().matches(Globals.numberPattern)) {
                             newValue = Integer.parseInt(value);
                             if (!Globals.validValue(newValue))
@@ -167,20 +183,60 @@ public class ScriptParser {
                 script.addCommand(command);
                 
             } else if (commandName.equalsIgnoreCase(Globals.conditionOperator)) {
-                Variable variable = readVariable(memory, lineScanner);
-                expect(readNext(lineScanner), "iz");
-                String comparison = readNext(lineScanner);
-                expect(comparison, "liek");
                 
-                String value = readNext(lineScanner);
-                Integer integerValue = Integer.parseInt(value);
-                if (!Globals.validValue(integerValue))
-                    throw new ScriptParseException("Unacceptable value: " + integerValue);
-                
-                CommandSequence conditionCommandSequence = parseSequence(scanner, memory);
-                ConditionCommand command = new ConditionCommand(variable, integerValue, conditionCommandSequence);
-                
-                script.addCommand(command);
+                try {
+                    boolean negative = false;
+                    boolean equals = false;
+                    boolean greater = false;
+                    
+                    String leftVariableName = lineScanner.next();
+                    Parameter leftParameter = getParameter(parameterFactory, memory, leftVariableName);
+                    
+                    String token = lineScanner.next();
+                    expect(token, Globals.isOperator);
+                    
+                    token = lineScanner.next();
+                    if (token.equalsIgnoreCase(Globals.negationOperator)) {
+                        negative = true;
+                        token = lineScanner.next();
+                    }
+                    
+                    if (token.equalsIgnoreCase(Globals.equalsOperator))
+                        equals = true;
+                    else if (token.equalsIgnoreCase(Globals.greaterOperator))
+                        greater = true;
+                    else
+                        throw new ScriptParseException("Invalid operator: " + token);
+                    
+                    String rightVariableName = lineScanner.next();
+                    Parameter rightParameter = getParameter(parameterFactory, memory, rightVariableName);
+                    
+                    int operation = 0;
+                    if (negative) {
+                        if (equals) {
+                            operation = Condition.NOT_EQUAL;
+                        } else if (greater) {
+                            operation = Condition.LESS_OR_EQUAL;
+                        } else
+                            throw new ScriptParseException("Invalid operation");
+                    } else {
+                        if (equals) {
+                            operation = Condition.EQUAL;
+                        } else if (greater) {
+                            operation = Condition.GREATER;
+                        } else
+                            throw new ScriptParseException("Invalid operation");
+                    }
+                    
+                    Condition condition = new SimpleCondition(leftParameter, rightParameter, operation);
+                    CommandSequence conditionCommandSequence = parseSequence(scanner, memory);
+                    
+                    ConditionCommand command = new ConditionCommand(condition, conditionCommandSequence);
+                    script.addCommand(command);
+                    
+                } catch (NoSuchElementException e) {
+                    throw new ScriptParseException("Missing operands");
+                }
                 
             } else if (commandName.equalsIgnoreCase(Globals.stackPushOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
