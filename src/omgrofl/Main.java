@@ -31,13 +31,15 @@ public class Main {
                     Script script = scriptParser.parse(input, memory);
                     script.run();
                 } catch (ScriptParseException e) {
-                    System.out.print("[failed to parse]");
+                    System.out.println("[failed to parse]");
+                    System.out.print(e);
                 } catch (ScriptRuntimeException e) {
-                    System.out.print("[runtime exception]");
+                    System.out.println("[runtime exception]");
+                    System.out.print(e);
+                } finally {
+                    System.out.println();
+                    System.out.println();
                 }
-                
-                System.out.println();
-                System.out.println();
             }
         }
     }
