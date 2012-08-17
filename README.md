@@ -32,3 +32,8 @@ Currently supported statements
 + Incrementing / decrementing (lmao/roflmao *variable*)
 + Conditions (wtf *variable/value* iz (nope) liek/uber *variable/value* ... brb)
 + Stack/Queue (n00b/l33t/haxor *variable*)
+
+License
+-------
+
+MIT (see LICENSE)
