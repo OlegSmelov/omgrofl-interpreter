@@ -2,6 +2,7 @@ package omgrofl.interpreter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import omgrofl.interpreter.commands.*;
@@ -60,6 +61,12 @@ public class ScriptParser {
         if (!value.equalsIgnoreCase(expected))
             throw new ScriptParseException(expected + " expected, "
                     + value + " found");
+    }
+    
+    public Script parse(InputStream input, Memory memory) throws ScriptParseException {
+        Scanner scanner = new Scanner(input);
+        CommandSequence commandSequence = parseSequence(scanner, memory);
+        return new Script(commandSequence);
     }
     
     public Script parse(File input, Memory memory) throws FileNotFoundException, ScriptParseException {

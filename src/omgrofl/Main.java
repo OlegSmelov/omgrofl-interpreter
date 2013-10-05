@@ -12,35 +12,27 @@ import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 public class Main {
     
     public static void main(String[] args) throws IOException {
-        File examplesDirectory = new File("examples");
-        String[] files = examplesDirectory.list();
-        
-        Arrays.sort(files);
+        String filename = null;
+        if (args.length > 0) {
+            filename = args[0];
+        }
         
         ScriptParser scriptParser = new ScriptParser();
+        Memory memory = new Memory();
+        Script script;
         
-        for (String filename : files) {
-            if (filename.endsWith(".omgrofl")) {
-                System.out.print(filename);
-                System.out.println(":");
-                
-                Memory memory = new Memory();
-                
-                try {
-                    File input = new File(examplesDirectory, filename);
-                    Script script = scriptParser.parse(input, memory);
-                    script.run();
-                } catch (ScriptParseException e) {
-                    System.out.println("[failed to parse]");
-                    System.out.print(e);
-                } catch (ScriptRuntimeException e) {
-                    System.out.println("[runtime exception]");
-                    System.out.print(e);
-                } finally {
-                    System.out.println();
-                    System.out.println();
-                }
+        try {
+            if (filename == null || filename.equals("-")) {
+                script = scriptParser.parse(System.in, memory);
+            } else {
+                File inputFile = new File(filename);
+                script = scriptParser.parse(inputFile, memory);
             }
+            script.run();
+        } catch (ScriptParseException e) {
+            System.err.println("Error parsing the script: " + e.getMessage());
+        } catch (ScriptRuntimeException e) {
+            System.err.println("Runtime exception: " + e.getMessage());
         }
     }
 }
