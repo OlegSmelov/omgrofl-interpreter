@@ -14,11 +14,13 @@ import omgrofl.interpreter.procedures.PrintCharacterProcedure;
 
 public class ScriptParser {
     
+    private int linesParsed;
+    
     private Variable readVariable(Memory memory, Scanner scanner) throws ScriptParseException {
         try {
             String variableName = scanner.next();
             if (!variableName.toLowerCase().matches(Globals.variablePattern)) {
-                throw new ScriptParseException(variableName
+                throw new ScriptParseException(linesParsed, variableName
                         + " is not a valid variable name");
             }
 
@@ -26,7 +28,7 @@ public class ScriptParser {
             return variable;
             
         } catch (NoSuchElementException e) {
-            throw new ScriptParseException("Missing variable");
+            throw new ScriptParseException(linesParsed, "Missing variable");
         }
     }
     
@@ -41,41 +43,44 @@ public class ScriptParser {
                 if (Globals.validValue(integerValue))
                     return parameterFactory.getParameter(integerValue);
                 else
-                    throw new ScriptParseException("Invalid value: " + integerValue);
+                    throw new ScriptParseException(linesParsed, "Invalid value: " + integerValue);
             } catch (NumberFormatException e) {
-                throw new ScriptParseException("Wrong number format: " + name);
+                throw new ScriptParseException(linesParsed, "Wrong number format: " + name);
             }
         } else
-            throw new ScriptParseException("Invalid parameter: " + name);
+            throw new ScriptParseException(linesParsed, "Invalid parameter: " + name);
     }
     
     public String readNext(Scanner scanner) throws ScriptParseException {
         try {
             return scanner.next();
         } catch (NoSuchElementException e) {
-            throw new ScriptParseException("Missing operand");
+            throw new ScriptParseException(linesParsed, "Missing operand");
         }
     }
     
     private void expect(String value, String expected) throws ScriptParseException {
         if (!value.equalsIgnoreCase(expected))
-            throw new ScriptParseException(expected + " expected, "
+            throw new ScriptParseException(linesParsed, expected + " expected, "
                     + value + " found");
     }
     
     public Script parse(InputStream input, Memory memory) throws ScriptParseException {
+        linesParsed = 0;
         Scanner scanner = new Scanner(input);
         CommandSequence commandSequence = parseSequence(scanner, memory);
         return new Script(commandSequence);
     }
     
     public Script parse(File input, Memory memory) throws FileNotFoundException, ScriptParseException {
+        linesParsed = 0;
         Scanner scanner = new Scanner(input);
         CommandSequence commandSequence = parseSequence(scanner, memory);
         return new Script(commandSequence);
     }
     
     public Script parse(String input, Memory memory) throws ScriptParseException {
+        linesParsed = 0;
         Scanner scanner = new Scanner(input);
         CommandSequence commandSequence = parseSequence(scanner, memory);
         return new Script(commandSequence);
@@ -88,6 +93,7 @@ public class ScriptParser {
         
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
+            linesParsed++;
             Scanner lineScanner = new Scanner(line);
             
             // Empty line, skip
@@ -125,23 +131,23 @@ public class ScriptParser {
                         if (value.toLowerCase().matches(Globals.numberPattern)) {
                             newValue = Integer.parseInt(value);
                             if (!Globals.validValue(newValue))
-                                throw new ScriptParseException("Unacceptable value: " + newValue);
+                                throw new ScriptParseException(linesParsed, "Unacceptable value: " + newValue);
                             valueParameter = parameterFactory.getParameter(newValue);
                         } else if (value.toLowerCase().matches(Globals.variablePattern)) {
                             Variable paramVariable = new Variable(memory, value);
                             valueParameter = parameterFactory.getParameter(paramVariable);
                         } else {
-                            throw new ScriptParseException("Unrecognized operand " + value);
+                            throw new ScriptParseException(linesParsed, "Unrecognized operand " + value);
                         }
                     } else if (operator.equalsIgnoreCase("to") && value.equalsIgnoreCase("/dev/null")) {
                         newValue = 0;
                         valueParameter = parameterFactory.getParameter(newValue);
                     } else {
-                        throw new ScriptParseException("Unrecognized operation with variable " + varName);
+                        throw new ScriptParseException(linesParsed, "Unrecognized operation with variable " + varName);
                     }
                     
                 } catch (NoSuchElementException e) {
-                    throw new ScriptParseException("Missing operands");
+                    throw new ScriptParseException(linesParsed, "Missing operands");
                 }
                 
                 AssignmentCommand assignmentCommand = new AssignmentCommand(variable, valueParameter);
@@ -157,7 +163,7 @@ public class ScriptParser {
                     String variableName = lineScanner.next();
                     
                     if (!variableName.toLowerCase().matches(Globals.variablePattern))
-                        throw new ScriptParseException(variableName
+                        throw new ScriptParseException(linesParsed, variableName
                                 + " is not a valid variable name");
                     
                     Variable variable = new Variable(memory, variableName);
@@ -170,7 +176,7 @@ public class ScriptParser {
                     
                     script.addCommand(command);
                 } catch (NoSuchElementException e) {
-                    throw new ScriptParseException("Missing operands");
+                    throw new ScriptParseException(linesParsed, "Missing operands");
                 }
                 
             } else if (commandName.equalsIgnoreCase(Globals.readCharacterOperator)) {
@@ -191,7 +197,7 @@ public class ScriptParser {
                     script.addCommand(command);
                     
                 } catch (NoSuchElementException e) {
-                    throw new ScriptParseException("Missing operands");
+                    throw new ScriptParseException(linesParsed, "Missing operands");
                 }
                 
             } else if (commandName.equalsIgnoreCase(Globals.incrementVariableOperator)) {
@@ -234,7 +240,7 @@ public class ScriptParser {
                     else if (token.equalsIgnoreCase(Globals.greaterOperator))
                         greater = true;
                     else
-                        throw new ScriptParseException("Invalid operator: " + token);
+                        throw new ScriptParseException(linesParsed, "Invalid operator: " + token);
                     
                     String rightVariableName = lineScanner.next();
                     Parameter rightParameter = getParameter(parameterFactory, memory, rightVariableName);
@@ -246,14 +252,14 @@ public class ScriptParser {
                         } else if (greater) {
                             operation = Condition.LESS_OR_EQUAL;
                         } else
-                            throw new ScriptParseException("Invalid operation");
+                            throw new ScriptParseException(linesParsed, "Invalid operation");
                     } else {
                         if (equals) {
                             operation = Condition.EQUAL;
                         } else if (greater) {
                             operation = Condition.GREATER;
                         } else
-                            throw new ScriptParseException("Invalid operation");
+                            throw new ScriptParseException(linesParsed, "Invalid operation");
                     }
                     
                     Condition condition = new SimpleCondition(leftParameter, rightParameter, operation);
@@ -263,7 +269,7 @@ public class ScriptParser {
                     script.addCommand(command);
                     
                 } catch (NoSuchElementException e) {
-                    throw new ScriptParseException("Missing operands");
+                    throw new ScriptParseException(linesParsed, "Missing operands");
                 }
                 
             } else if (commandName.equalsIgnoreCase(Globals.stackPushOperator)) {
@@ -285,7 +291,7 @@ public class ScriptParser {
                 script.addCommand(command);
                 
             } else {
-                throw new ScriptParseException("Unknown command " + commandName);
+                throw new ScriptParseException(linesParsed, "Unknown command " + commandName);
             }
         }
         

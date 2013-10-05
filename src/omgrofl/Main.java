@@ -30,9 +30,9 @@ public class Main {
             }
             script.run();
         } catch (ScriptParseException e) {
-            System.err.println("Error parsing the script: " + e.getMessage());
+            System.err.println("Error parsing the script: " + e);
         } catch (ScriptRuntimeException e) {
-            System.err.println("Runtime exception: " + e.getMessage());
+            System.err.println("Runtime exception: " + e);
         }
     }
 }
