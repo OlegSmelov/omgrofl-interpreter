@@ -11,3 +11,9 @@ rtfm
     lmao lol
     roflmao lool
 brb
+
+w00t put an endline at the end
+lol iz 13
+rofl lol
+lol iz 10
+rofl lol
