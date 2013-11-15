@@ -1,7 +1,7 @@
 package omgrofl.interpreter.commands;
 
 import omgrofl.interpreter.Command;
-import omgrofl.interpreter.Globals;
+import omgrofl.Globals;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 
 public class BreakCommand implements Command {

@@ -14,6 +14,14 @@ public class AssignmentCommand implements Command {
         this.value = value;
     }
 
+    public Variable getVariable() {
+        return variable;
+    }
+
+    public Parameter getValue() {
+        return value;
+    }
+
     @Override
     public void execute() {
         variable.setValue(value.evaluate());

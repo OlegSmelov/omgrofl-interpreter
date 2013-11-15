@@ -8,7 +8,7 @@ public class Script {
     
     protected CommandSequence commandSequence;
 
-    Script(CommandSequence commandSequence) {
+    public Script(CommandSequence commandSequence) {
         this.commandSequence = commandSequence;
     }
     
@@ -23,5 +23,9 @@ public class Script {
     @Override
     public String toString() {
         return commandSequence.toString();
+    }
+
+    public CommandSequence getCommandSequence() {
+        return commandSequence;
     }
 }

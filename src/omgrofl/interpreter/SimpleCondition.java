@@ -12,6 +12,18 @@ public class SimpleCondition implements Condition {
         this.right = right;
         this.operation = operation;
     }
+
+    public Parameter getLeftParameter() {
+        return left;
+    }
+
+    public Parameter getRightParameter() {
+        return right;
+    }
+
+    public int getOperation() {
+        return operation;
+    }
     
     @Override
     public boolean evaluate() throws ScriptRuntimeException {

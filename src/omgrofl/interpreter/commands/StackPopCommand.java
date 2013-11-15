@@ -1,7 +1,7 @@
 package omgrofl.interpreter.commands;
 
 import omgrofl.interpreter.Command;
-import omgrofl.interpreter.Globals;
+import omgrofl.Globals;
 import omgrofl.interpreter.Memory;
 import omgrofl.interpreter.Variable;
 
@@ -15,6 +15,10 @@ public class StackPopCommand implements Command {
         this.memory = memory;
     }
 
+    public Variable getVariable() {
+        return variable;
+    }
+    
     @Override
     public void execute() {
         variable.setValue(memory.removeFirst());

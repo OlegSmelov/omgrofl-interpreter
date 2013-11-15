@@ -1,10 +1,23 @@
 package omgrofl.interpreter.procedures;
 
-import omgrofl.interpreter.Globals;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import omgrofl.Globals;
 import omgrofl.interpreter.Parameter;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
 public class PrintCharacterProcedure extends AbstractProcedure {
+    
+    private PrintStream printStream;
+
+    public PrintCharacterProcedure() {
+        try {
+            printStream = new PrintStream(System.out, true, Globals.defaultEncoding);
+        } catch (UnsupportedEncodingException ex) {
+            System.err.println("Warning: unsupported encoding, using Java default");
+            printStream = System.out;
+        }
+    }
     
     @Override
     public String getName() {
@@ -22,7 +35,7 @@ public class PrintCharacterProcedure extends AbstractProcedure {
             System.out.print((Character) value);
         else if (value instanceof Integer) {
             Character charValue = (char) ((Integer) value).intValue();
-            System.out.print(charValue);
+            printStream.print(charValue);
         } else
             throw new ScriptRuntimeException("parameter is not a character");
 

@@ -19,6 +19,16 @@ public abstract class AbstractProcedure implements Procedure {
     public void clearParameters() {
         parameters.clear();
     }
+    
+    @Override
+    public Parameter getParameter(int index) {
+        return parameters.get(index);
+    }
+    
+    @Override
+    public int getParameterCount() {
+        return parameters.size();
+    }
 
     @Override
     public String toString() {

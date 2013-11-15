@@ -1,6 +1,6 @@
 package omgrofl.interpreter.procedures;
 
-import omgrofl.interpreter.Globals;
+import omgrofl.Globals;
 
 public class IncrementVariableProcedure extends AbstractVariableProcedure {
 

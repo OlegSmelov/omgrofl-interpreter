@@ -1,7 +1,7 @@
 package omgrofl.interpreter.commands;
 
 import omgrofl.interpreter.Command;
-import omgrofl.interpreter.Globals;
+import omgrofl.Globals;
 import omgrofl.interpreter.Memory;
 import omgrofl.interpreter.Variable;
 
@@ -13,6 +13,10 @@ public class DequeueCommand implements Command {
     public DequeueCommand(Variable variable, Memory memory) {
         this.variable = variable;
         this.memory = memory;
+    }
+
+    public Variable getVariable() {
+        return variable;
     }
 
     @Override

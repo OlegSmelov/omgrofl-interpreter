@@ -14,6 +14,10 @@ public class SleepCommand implements Command {
         this.parameter = parameter;
     }
 
+    public Parameter getParameter() {
+        return parameter;
+    }
+
     @Override
     public void execute() throws ScriptInterruptedException, ScriptExitException {
         Object durationObject = parameter.evaluate();

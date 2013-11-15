@@ -11,6 +11,10 @@ public class CallProcedureCommand implements Command {
         this.procedure = procedure;
     }
 
+    public Procedure getProcedure() {
+        return procedure;
+    }
+
     @Override
     public void execute() {
         procedure.execute();

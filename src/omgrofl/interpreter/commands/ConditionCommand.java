@@ -3,7 +3,7 @@ package omgrofl.interpreter.commands;
 import omgrofl.interpreter.Command;
 import omgrofl.interpreter.CommandSequence;
 import omgrofl.interpreter.Condition;
-import omgrofl.interpreter.Globals;
+import omgrofl.Globals;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 
@@ -15,6 +15,14 @@ public class ConditionCommand implements Command {
     public ConditionCommand(Condition condition, CommandSequence commandSequence) {
         this.condition = condition;
         this.commandSequence = commandSequence;
+    }
+
+    public Condition getCondition() {
+        return condition;
+    }
+
+    public CommandSequence getCommandSequence() {
+        return commandSequence;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package omgrofl.interpreter;
+package omgrofl;
 
 import java.util.Scanner;
 
@@ -29,6 +29,8 @@ public class Globals {
     
     public static final int minAllowedValue = 0;
     public static final int maxAllowedValue = 255;
+    
+    public static final String defaultEncoding = "ISO-8859-1";
     
     public static boolean validValue(int value) {
         return (value >= minAllowedValue)

@@ -2,7 +2,7 @@ package omgrofl.interpreter.commands;
 
 import omgrofl.interpreter.Command;
 import omgrofl.interpreter.CommandSequence;
-import omgrofl.interpreter.Globals;
+import omgrofl.Globals;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 
@@ -12,6 +12,10 @@ public class InfiniteLoopCommand implements Command {
 
     public InfiniteLoopCommand(CommandSequence script) {
         this.script = script;
+    }
+
+    public CommandSequence getCommandSequence() {
+        return script;
     }
 
     @Override

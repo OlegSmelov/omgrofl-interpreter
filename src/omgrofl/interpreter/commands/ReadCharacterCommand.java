@@ -2,7 +2,7 @@ package omgrofl.interpreter.commands;
 
 import java.io.IOException;
 import omgrofl.interpreter.Command;
-import omgrofl.interpreter.Globals;
+import omgrofl.Globals;
 import omgrofl.interpreter.Variable;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
@@ -14,6 +14,10 @@ public class ReadCharacterCommand implements Command {
 
     public ReadCharacterCommand(Variable variable) {
         this.variable = variable;
+    }
+
+    public Variable getVariable() {
+        return variable;
     }
 
     @Override

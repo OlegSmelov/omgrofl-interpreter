@@ -1,6 +1,6 @@
 package omgrofl.interpreter.procedures;
 
-import omgrofl.interpreter.Globals;
+import omgrofl.Globals;
 import omgrofl.interpreter.Parameter;
 import omgrofl.interpreter.Variable;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;

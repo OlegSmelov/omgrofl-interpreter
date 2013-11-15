@@ -8,7 +8,7 @@ import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 
 public class CommandSequence {
     
-    List<Command> commands = new ArrayList<Command>();
+    protected List<Command> commands = new ArrayList<Command>();
     
     public void addCommand(Command command) {
         commands.add(command);
@@ -20,6 +20,10 @@ public class CommandSequence {
     
     public void clearCommands() {
         commands.clear();
+    }
+    
+    public Command[] getCommands() {
+        return commands.toArray(new Command[0]);
     }
     
     public void run() throws ScriptInterruptedException, ScriptExitException {
