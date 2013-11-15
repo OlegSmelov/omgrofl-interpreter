@@ -1,7 +1,7 @@
-Omgrofl
-=======
+Omgrofl-interpteter
+===================
 
-Omgrofl interpreter
+Omgrofl interpreter with JIT support
 
 About
 -----
@@ -16,7 +16,8 @@ How it works
 ------------
 
 The interpreter parses the input source code and transforms it into an abstract
-syntax tree of sorts and then executes it.
+syntax tree and then executes it. The syntax tree can be interpreted directly or
+JIT compilation into JVM bytecode can be used.
 
 Currently supported statements
 ------------------------------
@@ -32,6 +33,17 @@ Currently supported statements
 + Incrementing / decrementing (lmao/roflmao *variable*)
 + Conditions (wtf *variable/value* iz (nope) liek/uber *variable/value* ... brb)
 + Stack/Queue (n00b/l33t/haxor *variable*)
+
+Implementation details
+----------------------
+
+* Unassigned variables are treated as nonexistent. If you try to use a variable
+    without assigning a value to it first, an exception will be thrown.
+* An exception will also be thrown if you try to take a value off the stack when
+    the stack is empty.
+* On EOF, 255 is returned as the value.
+* JIT may or may not be faster than interpreting Omgrofl directly. It will
+  definitely be faster if the program is long and resource-intensive.
 
 License
 -------
