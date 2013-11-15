@@ -46,6 +46,10 @@ Implementation details
     definitely be faster if the program is long and resource-intensive.
 * Indentation and whitespace don't matter. The only thing that matters is that
     every statement is written on a separate line.
+* **If there is more than one statement on a line, an exception will be thrown.**
+    This doesn't follow the language specification, but I believe this is a good
+    decision, because a) honest mistakes will be found faster, and b) people new
+    to the language will know if they've written anything wrong.
 
 License
 -------
