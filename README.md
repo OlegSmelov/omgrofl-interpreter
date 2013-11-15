@@ -43,7 +43,9 @@ Implementation details
     the stack is empty.
 * On EOF, 255 is returned as the value.
 * JIT may or may not be faster than interpreting Omgrofl directly. It will
-  definitely be faster if the program is long and resource-intensive.
+    definitely be faster if the program is long and resource-intensive.
+* Indentation and whitespace don't matter. The only thing that matters is that
+    every statement is written on a separate line.
 
 License
 -------
