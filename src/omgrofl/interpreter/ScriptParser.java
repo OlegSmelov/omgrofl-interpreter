@@ -96,10 +96,18 @@ public class ScriptParser {
                     + "', probably it shouldn't be there");
     }
     
-    private CommandSequence parseSequence(Scanner scanner, Memory memory)
+    private CommandSequence parseSequence(Scanner scanner, Memory memory) throws ScriptParseException {
+        return parseSequence(scanner, memory, true);
+    }
+    
+    /**
+     * @param isRoot root is being parsed (not statements inside a loop and such).
+     */
+    private CommandSequence parseSequence(Scanner scanner, Memory memory, boolean isRoot)
             throws ScriptParseException {
         CommandSequence script = new CommandSequence();
         ParameterFactory parameterFactory = new ParameterFactory();
+        boolean endOperatorFound = false;
         
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -115,6 +123,11 @@ public class ScriptParser {
             if (commandName.equalsIgnoreCase(Globals.endOperator)) {
                 // end of script
                 checkEnd(lineScanner);
+                
+                if (isRoot)
+                    throw new ScriptParseException(linesParsed, "Unmatched end operator (brb)");
+                
+                endOperatorFound = true;
                 break;
             }
             
@@ -127,7 +140,7 @@ public class ScriptParser {
                 checkEnd(lineScanner);
                 
                 // infinite loop (until broken)
-                CommandSequence loopCommandSequence = parseSequence(scanner, memory);
+                CommandSequence loopCommandSequence = parseSequence(scanner, memory, false);
                 InfiniteLoopCommand loop = new InfiniteLoopCommand(loopCommandSequence);
                 script.addCommand(loop);
                 
@@ -278,7 +291,7 @@ public class ScriptParser {
                     }
                     
                     Condition condition = new SimpleCondition(leftParameter, rightParameter, operation);
-                    CommandSequence conditionCommandSequence = parseSequence(scanner, memory);
+                    CommandSequence conditionCommandSequence = parseSequence(scanner, memory, false);
                     
                     ConditionCommand command = new ConditionCommand(condition, conditionCommandSequence);
                     script.addCommand(command);
@@ -313,6 +326,9 @@ public class ScriptParser {
             // used, therefore they were unexpected.
             checkEnd(lineScanner);
         }
+        
+        if (!isRoot && !endOperatorFound)
+            throw new ScriptParseException(linesParsed, "End operator (brb) expected, none found");
         
         return script;
     }
