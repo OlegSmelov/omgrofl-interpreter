@@ -87,6 +87,15 @@ public class ScriptParser {
         return new Script(commandSequence);
     }
     
+    /**
+     * Throws an exception if scanner still has tokens.
+     */
+    private void checkEnd(Scanner scanner) throws ScriptParseException {
+        if (scanner.hasNext())
+            throw new ScriptParseException(linesParsed, "Unexpected token '" + scanner.next()
+                    + "', probably it shouldn't be there");
+    }
+    
     private CommandSequence parseSequence(Scanner scanner, Memory memory)
             throws ScriptParseException {
         CommandSequence script = new CommandSequence();
@@ -103,15 +112,20 @@ public class ScriptParser {
             
             String commandName = lineScanner.next();
             
-            if (commandName.equalsIgnoreCase(Globals.endOperator))
+            if (commandName.equalsIgnoreCase(Globals.endOperator)) {
                 // end of script
+                checkEnd(lineScanner);
                 break;
+            }
             
-            else if (commandName.equalsIgnoreCase(Globals.commentOperator))
+            else if (commandName.equalsIgnoreCase(Globals.commentOperator)) {
                 // comment
                 continue;
+            }
             
             else if (commandName.equalsIgnoreCase(Globals.loopOperator)) {
+                checkEnd(lineScanner);
+                
                 // infinite loop (until broken)
                 CommandSequence loopCommandSequence = parseSequence(scanner, memory);
                 InfiniteLoopCommand loop = new InfiniteLoopCommand(loopCommandSequence);
@@ -294,6 +308,10 @@ public class ScriptParser {
             } else {
                 throw new ScriptParseException(linesParsed, "Unknown command " + commandName);
             }
+            
+            // Throw an exception if there are tokens left. They haven't been
+            // used, therefore they were unexpected.
+            checkEnd(lineScanner);
         }
         
         return script;
