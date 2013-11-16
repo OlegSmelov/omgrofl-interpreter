@@ -1,8 +1,10 @@
 package omgrofl;
 
-import java.io.File;
+import omgrofl.cl.JCommanderParameters;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import omgrofl.interpreter.Memory;
 import omgrofl.interpreter.Script;
 import omgrofl.interpreter.ScriptParser;
@@ -13,42 +15,91 @@ import omgrofl.jit.JavaBytecodeRunner;
 
 public class Main {
     
-    public static void main(String[] args) throws IOException {
-        String filename = null;
-        if (args.length > 0) {
-            filename = args[0];
+    private static void printUsageToStderr(JCommander jCommander) {
+        StringBuilder usageMessage = new StringBuilder();
+        jCommander.usage(usageMessage);
+        System.err.println(usageMessage.toString());
+    }
+    
+    public static void main(String[] args) {
+        JCommanderParameters parameters = new JCommanderParameters();
+        
+        JCommander jCommander = new JCommander(parameters);
+        try {
+            jCommander.parse(args);
+        } catch (ParameterException e) {
+            System.err.println("Error: " + e.getMessage());
+            printUsageToStderr(jCommander);
+            return;
+        }
+        
+        if (!parameters.useInterpreter && !parameters.useJIT &&
+                parameters.outputFile == null) {
+            System.err.println("Specify one of the parameters: -j, -i, -o");
+            printUsageToStderr(jCommander);
+            return;
+        }
+        
+        if (parameters.useInterpreter && parameters.useJIT) {
+            System.err.println("Incompatible parameters (-i and -j)");
+            printUsageToStderr(jCommander);
+            return;
+        }
+        
+        if (parameters.useInterpreter && parameters.outputFile != null) {
+            System.err.println("Incompatible parameters (-i and -o)");
+            printUsageToStderr(jCommander);
+            return;
         }
         
         ScriptParser scriptParser = new ScriptParser();
         Memory memory = new Memory();
-        Script script = null;
+        Script script;
+        
+        String className = "Omgrofl";
+        if (parameters.outputFile != null) {
+            String filename = parameters.outputFile.getName();
+            className = filename.substring(0, filename.lastIndexOf(".")).replace(" ", "_");
+            // FIXME: class name should be validated more thoroughly
+        }
         
         try {
-            if (filename == null || filename.equals("-")) {
+            if (parameters.inputFile == null) {
                 script = scriptParser.parse(System.in, memory);
             } else {
-                File inputFile = new File(filename);
-                script = scriptParser.parse(inputFile, memory);
+                script = scriptParser.parse(parameters.inputFile, memory);
             }
-            //script.run();
+            
+            if (parameters.useInterpreter)
+                script.run();
+            
+            boolean compilationRequired = parameters.useJIT ||
+                    parameters.outputFile != null;
+            
+            if (compilationRequired) {
+                try {
+                    JavaBytecodeCompiler compiler = new JavaBytecodeCompiler(className);
+                    compiler.visit(script);
+
+                    byte[] bytecode = compiler.getBytecode();
+                    if (parameters.outputFile != null) {
+                        FileOutputStream outFile = new FileOutputStream(parameters.outputFile);
+                        outFile.write(bytecode);
+                        outFile.close();
+                    }
+
+                    if (parameters.useJIT)
+                        JavaBytecodeRunner.run(compiler.getBytecode(), className);
+                } catch (Exception ex) {
+                    System.err.println("Compilation error: " + ex.getMessage());
+                }
+            }
         } catch (ScriptParseException e) {
             System.err.println("Error parsing the script: " + e);
         } catch (ScriptRuntimeException e) {
             System.err.println("Runtime exception: " + e);
-        }
-        
-        try {
-            JavaBytecodeCompiler compiler = new JavaBytecodeCompiler("Omgrofl");
-            compiler.visit(script);
-            
-            /*FileOutputStream outFile = new FileOutputStream("Omgrofl.class");
-            byte[] bytecode = compiler.getBytecode();
-            outFile.write(bytecode);
-            outFile.close();*/
-            
-            JavaBytecodeRunner.run(compiler.getBytecode(), "Omgrofl");
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            System.err.println("File not found");
         }
     }
 }
