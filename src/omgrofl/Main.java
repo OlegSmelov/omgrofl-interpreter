@@ -15,6 +15,14 @@ import omgrofl.jit.JavaBytecodeRunner;
 
 public class Main {
     
+    public interface ExitCodes {
+        int Success = 0;
+        int FileNotFound = 1;
+        int ParsingError = 2;
+        int CompilationError = 3;
+        int RuntimeError = 4;
+    }
+    
     private static void printUsageToStderr(JCommander jCommander) {
         StringBuilder usageMessage = new StringBuilder();
         jCommander.usage(usageMessage);
@@ -92,14 +100,18 @@ public class Main {
                         JavaBytecodeRunner.run(compiler.getBytecode(), className);
                 } catch (Exception ex) {
                     System.err.println("Compilation error: " + ex.getMessage());
+                    System.exit(ExitCodes.CompilationError);
                 }
             }
         } catch (ScriptParseException e) {
             System.err.println("Error parsing the script: " + e);
+            System.exit(ExitCodes.ParsingError);
         } catch (ScriptRuntimeException e) {
             System.err.println("Runtime exception: " + e);
+            System.exit(ExitCodes.RuntimeError);
         } catch (FileNotFoundException ex) {
             System.err.println("File not found");
+            System.exit(ExitCodes.FileNotFound);
         }
     }
 }
