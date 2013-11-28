@@ -112,6 +112,12 @@ public class ScriptParser {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             linesParsed++;
+            
+            if (isRoot && linesParsed == 1 && line.startsWith("#!")) {
+                // it's a shebang, ignore the whole line
+                continue;
+            }
+            
             Scanner lineScanner = new Scanner(line);
             
             // Empty line, skip
