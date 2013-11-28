@@ -6,8 +6,9 @@ import omgrofl.interpreter.Condition;
 import omgrofl.Globals;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
+import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
-public class ConditionCommand implements Command {
+public class ConditionCommand extends Command {
     
     protected Condition condition;
     protected CommandSequence commandSequence;
@@ -27,7 +28,16 @@ public class ConditionCommand implements Command {
 
     @Override
     public void execute() throws ScriptInterruptedException, ScriptExitException {
-        if (condition.evaluate())
+        boolean conditionValue;
+        
+        try {
+            conditionValue = condition.evaluate();
+        } catch (ScriptRuntimeException exception) {
+            exception.setLine(sourceCodeLine);
+            throw exception;
+        }
+        
+        if (conditionValue)
             commandSequence.run();
     }
 

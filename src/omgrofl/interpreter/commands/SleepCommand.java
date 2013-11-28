@@ -6,7 +6,7 @@ import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
-public class SleepCommand implements Command {
+public class SleepCommand extends Command {
     
     protected Parameter parameter;
 
@@ -28,6 +28,7 @@ public class SleepCommand implements Command {
             } catch (InterruptedException e) {
             }
         } else
-            throw new ScriptRuntimeException(getClass().getName() + ": Parameter is not an integer");
+            throw new ScriptRuntimeException(sourceCodeLine,
+                    getClass().getName() + ": Parameter is not an integer");
     }
 }

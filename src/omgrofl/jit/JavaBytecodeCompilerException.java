@@ -1,22 +1,17 @@
-package omgrofl.interpreter.exceptions;
+package omgrofl.jit;
 
-public class ScriptRuntimeException extends RuntimeException {
-    
+public class JavaBytecodeCompilerException extends Exception {
     private Integer line = null;
-
-    public ScriptRuntimeException(String message) {
+    
+    public JavaBytecodeCompilerException(String message) {
         super(message);
     }
-    
-    public ScriptRuntimeException(Integer line, String message) {
+
+    public JavaBytecodeCompilerException(Integer line, String message) {
         this(message);
         this.line = line;
     }
 
-    public ScriptRuntimeException() {
-        super();
-    }
-    
     public Integer getLine() {
         return line;
     }

@@ -148,7 +148,7 @@ public class ScriptParser {
                 // infinite loop (until broken)
                 CommandSequence loopCommandSequence = parseSequence(scanner, memory, false);
                 InfiniteLoopCommand loop = new InfiniteLoopCommand(loopCommandSequence);
-                script.addCommand(loop);
+                script.addCommand(loop, linesParsed);
                 
             } else if (commandName.toLowerCase().matches(Globals.variablePattern)) {
                 String varName = commandName;
@@ -185,14 +185,14 @@ public class ScriptParser {
                 }
                 
                 AssignmentCommand assignmentCommand = new AssignmentCommand(variable, valueParameter);
-                script.addCommand(assignmentCommand);
+                script.addCommand(assignmentCommand, linesParsed);
                 
             } else if (commandName.equalsIgnoreCase(Globals.breakOperator)) {
                 if (isRoot) {
                     throw new ScriptParseException(linesParsed, "Break operator outside of a loop is not allowed");
                 }
                 BreakCommand breakCommand = new BreakCommand();
-                script.addCommand(breakCommand);
+                script.addCommand(breakCommand, linesParsed);
                 
             } else if (commandName.equalsIgnoreCase(Globals.printCharacterOperator)) {
                 
@@ -211,7 +211,7 @@ public class ScriptParser {
                     
                     CallProcedureCommand command = new CallProcedureCommand(printCharacterProcedure);
                     
-                    script.addCommand(command);
+                    script.addCommand(command, linesParsed);
                 } catch (NoSuchElementException e) {
                     throw new ScriptParseException(linesParsed, "Missing operands");
                 }
@@ -220,18 +220,18 @@ public class ScriptParser {
                 
                 Variable variable = readVariable(memory, lineScanner);
                 Command command = new ReadCharacterCommand(variable);
-                script.addCommand(command);
+                script.addCommand(command, linesParsed);
                 
             } else if (commandName.equalsIgnoreCase(Globals.exitOperator)) {
                 Command command = new ExitCommand();
-                script.addCommand(command);
+                script.addCommand(command, linesParsed);
                 
             } else if (commandName.equalsIgnoreCase(Globals.sleepOperator)) {
                 try {
                     String durationString = lineScanner.next();
                     Parameter durationParameter = getParameter(parameterFactory, memory, durationString);
                     Command command = new SleepCommand(durationParameter);
-                    script.addCommand(command);
+                    script.addCommand(command, linesParsed);
                     
                 } catch (NoSuchElementException e) {
                     throw new ScriptParseException(linesParsed, "Missing operands");
@@ -243,7 +243,7 @@ public class ScriptParser {
                 procedure.addParameter(parameterFactory.getParameter(variable));
                 CallProcedureCommand command = new CallProcedureCommand(procedure);
 
-                script.addCommand(command);
+                script.addCommand(command, linesParsed);
                 
             } else if (commandName.equalsIgnoreCase(Globals.decrementVariableOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
@@ -251,7 +251,7 @@ public class ScriptParser {
                 procedure.addParameter(parameterFactory.getParameter(variable));
                 CallProcedureCommand command = new CallProcedureCommand(procedure);
 
-                script.addCommand(command);
+                script.addCommand(command, linesParsed);
                 
             } else if (commandName.equalsIgnoreCase(Globals.conditionOperator)) {
                 
@@ -303,7 +303,7 @@ public class ScriptParser {
                     CommandSequence conditionCommandSequence = parseSequence(scanner, memory, false);
                     
                     ConditionCommand command = new ConditionCommand(condition, conditionCommandSequence);
-                    script.addCommand(command);
+                    script.addCommand(command, linesParsed);
                     
                 } catch (NoSuchElementException e) {
                     throw new ScriptParseException(linesParsed, "Missing operands");
@@ -313,19 +313,19 @@ public class ScriptParser {
                 Variable variable = readVariable(memory, lineScanner);
                 Command command = new StackPushCommand(variable, memory);
                 
-                script.addCommand(command);
+                script.addCommand(command, linesParsed);
             
             } else if (commandName.equalsIgnoreCase(Globals.stackPopOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
                 Command command = new StackPopCommand(variable, memory);
                 
-                script.addCommand(command);
+                script.addCommand(command, linesParsed);
             
             } else if (commandName.equalsIgnoreCase(Globals.dequeueOperator)) {
                 Variable variable = readVariable(memory, lineScanner);
                 Command command = new DequeueCommand(variable, memory);
                 
-                script.addCommand(command);
+                script.addCommand(command, linesParsed);
                 
             } else {
                 throw new ScriptParseException(linesParsed, "Unknown command " + commandName);

@@ -5,7 +5,7 @@ import omgrofl.Globals;
 import omgrofl.interpreter.Memory;
 import omgrofl.interpreter.Variable;
 
-public class DequeueCommand implements Command {
+public class DequeueCommand extends Command {
 
     protected Variable variable;
     protected Memory memory;

@@ -5,7 +5,7 @@ import omgrofl.Globals;
 import omgrofl.interpreter.Memory;
 import omgrofl.interpreter.Variable;
 
-public class StackPushCommand implements Command {
+public class StackPushCommand extends Command {
 
     protected Variable variable;
     protected Memory memory;

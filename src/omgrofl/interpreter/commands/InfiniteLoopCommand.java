@@ -6,7 +6,7 @@ import omgrofl.Globals;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 
-public class InfiniteLoopCommand implements Command {
+public class InfiniteLoopCommand extends Command {
     
     protected CommandSequence script;
 

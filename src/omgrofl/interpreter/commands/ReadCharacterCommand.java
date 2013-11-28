@@ -8,7 +8,7 @@ import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
-public class ReadCharacterCommand implements Command {
+public class ReadCharacterCommand extends Command {
     
     protected Variable variable;
 
@@ -26,8 +26,8 @@ public class ReadCharacterCommand implements Command {
         try {
             newValue = Globals.adjustValue(System.in.read());
         } catch (IOException e) {
-            throw new ScriptRuntimeException("Error reading from standard input: " +
-                    e.getMessage());
+            throw new ScriptRuntimeException(sourceCodeLine,
+                    "Error reading from standard input: " + e.getMessage());
         }
         variable.setValue(newValue);
     }

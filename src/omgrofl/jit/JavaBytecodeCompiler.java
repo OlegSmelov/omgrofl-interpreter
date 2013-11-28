@@ -48,7 +48,7 @@ public class JavaBytecodeCompiler implements Opcodes {
         this.className = className;
     }
     
-    public void visit(Script script) throws Exception {
+    public void visit(Script script) throws JavaBytecodeCompilerException {
         classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         definedVariables = new HashSet<String>();
         printMethodDefined = false;
@@ -89,41 +89,48 @@ public class JavaBytecodeCompiler implements Opcodes {
         }
     }
     
-    private void visit(CommandSequence commandSequence) throws Exception {
+    private void visit(CommandSequence commandSequence) throws JavaBytecodeCompilerException {
         Command[] commands = commandSequence.getCommands();
         for (Command command : commands) {
             visit(command);
         }
     }
     
-    private void visit(Command command) throws Exception {
-        if (command instanceof InfiniteLoopCommand) {
+    private void visit(Command command) throws JavaBytecodeCompilerException {
+        try {
+           if (command instanceof InfiniteLoopCommand) {
             visit((InfiniteLoopCommand) command);
-        } else if (command instanceof BreakCommand) {
-            visit((BreakCommand) command);
-        } else if (command instanceof AssignmentCommand) {
-            visit((AssignmentCommand) command);
-        } else if (command instanceof CallProcedureCommand) {
-            visit((CallProcedureCommand) command);
-        } else if (command instanceof ConditionCommand) {
-            visit((ConditionCommand) command);
-        } else if (command instanceof StackPushCommand) {
-            visit((StackPushCommand) command);
-        } else if (command instanceof StackPopCommand) {
-            visit((StackPopCommand) command);
-        } else if (command instanceof DequeueCommand) {
-            visit((DequeueCommand) command);
-        } else if (command instanceof ExitCommand) {
-            visit((ExitCommand) command);
-        } else if (command instanceof ReadCharacterCommand) {
-            visit((ReadCharacterCommand) command);
-        } else if (command instanceof SleepCommand) {
-            visit((SleepCommand) command);
-        } else
-            throw new Exception("Unrecognized command");
+            } else if (command instanceof BreakCommand) {
+                visit((BreakCommand) command);
+            } else if (command instanceof AssignmentCommand) {
+                visit((AssignmentCommand) command);
+            } else if (command instanceof CallProcedureCommand) {
+                visit((CallProcedureCommand) command);
+            } else if (command instanceof ConditionCommand) {
+                visit((ConditionCommand) command);
+            } else if (command instanceof StackPushCommand) {
+                visit((StackPushCommand) command);
+            } else if (command instanceof StackPopCommand) {
+                visit((StackPopCommand) command);
+            } else if (command instanceof DequeueCommand) {
+                visit((DequeueCommand) command);
+            } else if (command instanceof ExitCommand) {
+                visit((ExitCommand) command);
+            } else if (command instanceof ReadCharacterCommand) {
+                visit((ReadCharacterCommand) command);
+            } else if (command instanceof SleepCommand) {
+                visit((SleepCommand) command);
+            } else
+                throw new JavaBytecodeCompilerException("JIT is unaware of this command, " +
+                        "try using interpreter mode");
+        } catch (JavaBytecodeCompilerException exception) {
+            if (exception.getLine() == null)
+                exception.setLine(command.getSourceCodeLine());
+            throw exception;
+        }
     }
     
-    private void visit(InfiniteLoopCommand loopCommand) throws Exception {
+    private void visit(InfiniteLoopCommand loopCommand) throws JavaBytecodeCompilerException {
         CommandSequence commandSequence = loopCommand.getCommandSequence();
         Command[] commands = commandSequence.getCommands();
         
@@ -147,7 +154,7 @@ public class JavaBytecodeCompiler implements Opcodes {
         methodVisitor.visitJumpInsn(GOTO, lastLoopEnd);
     }
     
-    private void visit(AssignmentCommand assignmentCommand) throws Exception {
+    private void visit(AssignmentCommand assignmentCommand) throws JavaBytecodeCompilerException {
         Variable variable = assignmentCommand.getVariable();
         Parameter parameter = assignmentCommand.getValue();
         
@@ -157,9 +164,11 @@ public class JavaBytecodeCompiler implements Opcodes {
                 variable.getName().toLowerCase(), "C");
     }
     
-    private void visit(CallProcedureCommand callProcedureCommand) throws Exception {
+    private void visit(CallProcedureCommand callProcedureCommand) throws JavaBytecodeCompilerException {
         Procedure procedure = callProcedureCommand.getProcedure();
         
+        try
+        {
         if (procedure instanceof IncrementVariableProcedure) {
             visitProcedure((IncrementVariableProcedure) procedure);
         } else if (procedure instanceof DecrementVariableProcedure) {
@@ -167,10 +176,16 @@ public class JavaBytecodeCompiler implements Opcodes {
         } else if (procedure instanceof PrintCharacterProcedure) {
             visitProcedure((PrintCharacterProcedure) procedure);
         } else
-            throw new Exception("This procedure is not supported");
+            throw new JavaBytecodeCompilerException("JIT is unaware of this procedure, " +
+                        "try using interpreter mode");
+        } catch (JavaBytecodeCompilerException exception) {
+            if (exception.getLine() == null)
+                exception.setLine(callProcedureCommand.getSourceCodeLine());
+            throw exception;
+        }
     }
     
-    private void visit(ConditionCommand conditionCommand) throws Exception {
+    private void visit(ConditionCommand conditionCommand) throws JavaBytecodeCompilerException {
         Condition condition = conditionCommand.getCondition();
         Command[] commands = conditionCommand.getCommandSequence().getCommands();
         
@@ -204,7 +219,9 @@ public class JavaBytecodeCompiler implements Opcodes {
                     methodVisitor.visitJumpInsn(IF_ICMPEQ, conditionEnd);
                     break;
                 default:
-                    throw new Exception("Condition not supported");
+                    throw new JavaBytecodeCompilerException(
+                            conditionCommand.getSourceCodeLine(),
+                            "Condition not supported");
             }
             
             for (Command command : commands) {
@@ -213,10 +230,11 @@ public class JavaBytecodeCompiler implements Opcodes {
             
             methodVisitor.visitLabel(conditionEnd);
         } else
-            throw new Exception("This type of condition is not supported");
+            throw new JavaBytecodeCompilerException(conditionCommand.getSourceCodeLine(),
+                    "This type of condition is not supported");
     }
     
-    private void visit(StackPushCommand stackPushCommand) throws Exception {
+    private void visit(StackPushCommand stackPushCommand) throws JavaBytecodeCompilerException {
         Variable variable = stackPushCommand.getVariable();
 
         visitStackDefinition();
@@ -230,7 +248,7 @@ public class JavaBytecodeCompiler implements Opcodes {
                 "push", "(Ljava/lang/Object;)V");
     }
     
-    private void visit(StackPopCommand stackPopCommand) throws Exception {
+    private void visit(StackPopCommand stackPopCommand) throws JavaBytecodeCompilerException {
         Variable variable = stackPopCommand.getVariable();
         
         visitStackDefinition();
@@ -248,7 +266,7 @@ public class JavaBytecodeCompiler implements Opcodes {
                 variable.getName().toLowerCase(), "C");
     }
     
-    private void visit(DequeueCommand dequeueCommand) throws Exception {
+    private void visit(DequeueCommand dequeueCommand) throws JavaBytecodeCompilerException {
         Variable variable = dequeueCommand.getVariable();
         
         visitStackDefinition();
@@ -296,7 +314,7 @@ public class JavaBytecodeCompiler implements Opcodes {
             variable.getName().toLowerCase(), "C");
     }
     
-    private void visit(SleepCommand sleepCommand) throws Exception {
+    private void visit(SleepCommand sleepCommand) throws JavaBytecodeCompilerException {
         Parameter parameter = sleepCommand.getParameter();
         
         visitParameterLoad(parameter);
@@ -340,7 +358,7 @@ public class JavaBytecodeCompiler implements Opcodes {
         stackDefined = true;
     }
     
-    private void visitParameterLoad(Parameter parameter) throws Exception {
+    private void visitParameterLoad(Parameter parameter) throws JavaBytecodeCompilerException {
         if (parameter instanceof ObjectParameter) {
             Object value = parameter.evaluate();
             Integer intValue = (Integer) value;
@@ -373,16 +391,16 @@ public class JavaBytecodeCompiler implements Opcodes {
             Variable valueVariable = variableParameter.getVariable();
             
             if (!definedVariables.contains(valueVariable.getName().toLowerCase()))
-                throw new Exception("Trying to use an undefined variable");
+                throw new JavaBytecodeCompilerException("Trying to use an undefined variable");
             
             visitVariableLoad(valueVariable);
         } else
-            throw new Exception("Parameter type is not supported");
+            throw new JavaBytecodeCompilerException("Parameter type is not supported");
     }
     
-    private void visitIncrementDecrementProcedure(Variable variable, boolean increment) throws Exception {
+    private void visitIncrementDecrementProcedure(Variable variable, boolean increment) throws JavaBytecodeCompilerException {
         if (!definedVariables.contains(variable.getName().toLowerCase()))
-            throw new Exception("Trying to use an undefined variable"); 
+            throw new JavaBytecodeCompilerException("Trying to use an undefined variable"); 
 
         visitVariableLoad(variable);
         methodVisitor.visitInsn(ICONST_1);
@@ -392,37 +410,37 @@ public class JavaBytecodeCompiler implements Opcodes {
             variable.getName().toLowerCase(), "C");
     }
     
-    private void visitProcedure(IncrementVariableProcedure procedure) throws Exception {
+    private void visitProcedure(IncrementVariableProcedure procedure) throws JavaBytecodeCompilerException {
         Parameter parameter = procedure.getParameter(0);
         if (parameter instanceof VariableParameter) {
             Variable variable = ((VariableParameter) parameter).getVariable();
             visitIncrementDecrementProcedure(variable, true);
         }
         else
-            throw new Exception("Bad parameter");
+            throw new JavaBytecodeCompilerException("Bad parameter");
     }
     
-    private void visitProcedure(DecrementVariableProcedure procedure) throws Exception {
+    private void visitProcedure(DecrementVariableProcedure procedure) throws JavaBytecodeCompilerException {
         Parameter parameter = procedure.getParameter(0);
         if (parameter instanceof VariableParameter) {
             Variable variable = ((VariableParameter) parameter).getVariable();
             visitIncrementDecrementProcedure(variable, false);
         }
         else
-            throw new Exception("Bad parameter");
+            throw new JavaBytecodeCompilerException("Bad parameter");
     }
     
-    private void visitProcedure(PrintCharacterProcedure procedure) throws Exception {
+    private void visitProcedure(PrintCharacterProcedure procedure) throws JavaBytecodeCompilerException {
         Parameter parameter = procedure.getParameter(0);
         if (parameter instanceof VariableParameter) {
             Variable variable = ((VariableParameter) parameter).getVariable();
             visitPrintMethod(variable);
         }
         else
-            throw new Exception("Bad parameter");
+            throw new JavaBytecodeCompilerException("Bad parameter");
     }
     
-    private void visitPrintMethod(Variable variable) throws Exception {
+    private void visitPrintMethod(Variable variable) throws JavaBytecodeCompilerException {
         if (!printMethodDefined) {
             // printStream field
             classWriter.visitField(ACC_PUBLIC + ACC_STATIC, "printStream",
@@ -472,10 +490,10 @@ public class JavaBytecodeCompiler implements Opcodes {
      * Adds the load variable opcodes
      * @param variable Variable to load
      */
-    private void visitVariableLoad(Variable variable) throws Exception {
+    private void visitVariableLoad(Variable variable) throws JavaBytecodeCompilerException {
         String varName = variable.getName().toLowerCase();
         if (!definedVariables.contains(varName))
-            throw new Exception("Variable is not defined");
+            throw new JavaBytecodeCompilerException("Variable is not defined");
         methodVisitor.visitFieldInsn(GETSTATIC, className, varName, "C");
     }
     

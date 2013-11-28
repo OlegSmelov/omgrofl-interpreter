@@ -5,12 +5,14 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import omgrofl.interpreter.Memory;
 import omgrofl.interpreter.Script;
 import omgrofl.interpreter.ScriptParser;
 import omgrofl.interpreter.exceptions.ScriptParseException;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 import omgrofl.jit.JavaBytecodeCompiler;
+import omgrofl.jit.JavaBytecodeCompilerException;
 import omgrofl.jit.JavaBytecodeRunner;
 
 public class Main {
@@ -21,6 +23,7 @@ public class Main {
         int ParsingError = 2;
         int CompilationError = 3;
         int RuntimeError = 4;
+        int IOError = 5;
     }
     
     private static void printUsageToStderr(JCommander jCommander) {
@@ -98,8 +101,11 @@ public class Main {
 
                     if (parameters.useJIT)
                         JavaBytecodeRunner.run(compiler.getBytecode(), className);
-                } catch (Exception ex) {
-                    System.err.println("Compilation error: " + ex.getMessage());
+                } catch (IOException ex) {
+                    System.err.println("Input/output error: " + ex);
+                    System.exit(ExitCodes.IOError);
+                } catch (JavaBytecodeCompilerException ex) {
+                    System.err.println("Compilation error: " + ex);
                     System.exit(ExitCodes.CompilationError);
                 }
             }

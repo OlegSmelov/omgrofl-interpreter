@@ -4,7 +4,7 @@ import omgrofl.interpreter.Command;
 import omgrofl.Globals;
 import omgrofl.interpreter.exceptions.ScriptExitException;
 
-public class ExitCommand implements Command {
+public class ExitCommand extends Command {
 
     @Override
     public void execute() throws ScriptExitException {

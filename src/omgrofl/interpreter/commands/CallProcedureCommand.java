@@ -2,8 +2,9 @@ package omgrofl.interpreter.commands;
 
 import omgrofl.interpreter.Command;
 import omgrofl.interpreter.Procedure;
+import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
-public class CallProcedureCommand implements Command {
+public class CallProcedureCommand extends Command {
 
     protected Procedure procedure;
 
@@ -17,7 +18,12 @@ public class CallProcedureCommand implements Command {
 
     @Override
     public void execute() {
-        procedure.execute();
+        try {
+            procedure.execute();
+        } catch (ScriptRuntimeException exception) {
+            exception.setLine(sourceCodeLine);
+            throw exception;
+        }
     }
 
     @Override

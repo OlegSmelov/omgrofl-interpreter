@@ -10,7 +10,8 @@ public class CommandSequence {
     
     protected List<Command> commands = new ArrayList<Command>();
     
-    public void addCommand(Command command) {
+    public void addCommand(Command command, Integer lineNumber) {
+        command.setSourceCodeLine(lineNumber);
         commands.add(command);
     }
     
