@@ -182,6 +182,9 @@ public class ScriptParser {
                 script.addCommand(assignmentCommand);
                 
             } else if (commandName.equalsIgnoreCase(Globals.breakOperator)) {
+                if (isRoot) {
+                    throw new ScriptParseException(linesParsed, "Break operator outside of a loop is not allowed");
+                }
                 BreakCommand breakCommand = new BreakCommand();
                 script.addCommand(breakCommand);
                 
