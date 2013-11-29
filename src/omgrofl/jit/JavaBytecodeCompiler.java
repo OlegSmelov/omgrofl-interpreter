@@ -169,15 +169,15 @@ public class JavaBytecodeCompiler implements Opcodes {
         
         try
         {
-        if (procedure instanceof IncrementVariableProcedure) {
-            visitProcedure((IncrementVariableProcedure) procedure);
-        } else if (procedure instanceof DecrementVariableProcedure) {
-            visitProcedure((DecrementVariableProcedure) procedure);
-        } else if (procedure instanceof PrintCharacterProcedure) {
-            visitProcedure((PrintCharacterProcedure) procedure);
-        } else
-            throw new JavaBytecodeCompilerException("JIT is unaware of this procedure, " +
-                        "try using interpreter mode");
+            if (procedure instanceof IncrementVariableProcedure) {
+                visitProcedure((IncrementVariableProcedure) procedure);
+            } else if (procedure instanceof DecrementVariableProcedure) {
+                visitProcedure((DecrementVariableProcedure) procedure);
+            } else if (procedure instanceof PrintCharacterProcedure) {
+                visitProcedure((PrintCharacterProcedure) procedure);
+            } else
+                throw new JavaBytecodeCompilerException("JIT is unaware of this procedure, " +
+                            "try using interpreter mode");
         } catch (JavaBytecodeCompilerException exception) {
             if (exception.getLine() == null)
                 exception.setLine(callProcedureCommand.getSourceCodeLine());
