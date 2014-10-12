@@ -19,6 +19,22 @@ The interpreter parses the input source code and transforms it into an abstract
 syntax tree and then executes it. The syntax tree can be interpreted directly or
 JIT compilation into JVM bytecode can be used.
 
+Getting started
+---------------
+
+To compile, run these commands in the command line:
+```
+git clone https://github.com/OlegSmelov/omgrofl-interpreter.git
+cd omgrofl-interpreter
+ant
+```
+
+Run an example:
+```
+cd dist
+java -jar Omgrofl.jar -j -f ../examples/alphabet.omgrofl
+```
+
 Currently supported statements
 ------------------------------
 
