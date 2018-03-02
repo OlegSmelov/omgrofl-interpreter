@@ -1,7 +1,7 @@
 Omgrofl-interpteter
 ===================
 
-Omgrofl interpreter with JIT support
+Omgrofl interpreter written in Java
 
 About
 -----
@@ -16,13 +16,12 @@ How it works
 ------------
 
 The interpreter parses the input source code and transforms it into an abstract
-syntax tree and then executes it. The syntax tree can be interpreted directly or
-JIT compilation into JVM bytecode can be used.
+syntax tree. It then traverses the tree and runs each instruction.
 
 Getting started
 ---------------
 
-To compile, run these commands in the command line:
+To compile, run these commands on the command line:
 ```
 git clone https://github.com/OlegSmelov/omgrofl-interpreter.git
 cd omgrofl-interpreter
@@ -32,7 +31,7 @@ ant
 Run an example:
 ```
 cd dist
-java -jar Omgrofl.jar -j -f ../examples/alphabet.omgrofl
+java -jar Omgrofl.jar -f ../examples/alphabet.omgrofl
 ```
 
 Currently supported statements
@@ -58,8 +57,6 @@ Implementation details
 * An exception will also be thrown if you try to take a value off the stack when
     the stack is empty.
 * On EOF, 255 is returned as the value.
-* JIT may or may not be faster than interpreting Omgrofl directly. It will
-    definitely be faster if the program is long and resource-intensive.
 * Indentation and whitespace don't matter. The only thing that matters is that
     every statement is written on a separate line.
 * **If there is more than one statement on a line, an exception will be thrown.**
