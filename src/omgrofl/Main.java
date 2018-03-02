@@ -16,12 +16,10 @@ public class Main {
 
     public interface ExitCodes {
 
-        int Success = 0;
-        int FileNotFound = 1;
-        int ParsingError = 2;
-        int CompilationError = 3;
-        int RuntimeError = 4;
-        int IOError = 5;
+        int SUCCESS = 0;
+        int FILE_NOT_FOUND = 1;
+        int PARSING_ERROR = 2;
+        int RUNTIME_ERROR = 3;
     }
 
     private static void printUsageToStderr(JCommander jCommander) {
@@ -55,13 +53,13 @@ public class Main {
             script.run();
         } catch (ScriptParseException e) {
             System.err.println("Error parsing the script: " + e);
-            System.exit(ExitCodes.ParsingError);
+            System.exit(ExitCodes.PARSING_ERROR);
         } catch (ScriptRuntimeException e) {
             System.err.println("Runtime exception: " + e);
-            System.exit(ExitCodes.RuntimeError);
+            System.exit(ExitCodes.RUNTIME_ERROR);
         } catch (FileNotFoundException e) {
             System.err.println("File not found");
-            System.exit(ExitCodes.FileNotFound);
+            System.exit(ExitCodes.FILE_NOT_FOUND);
         }
     }
 }
