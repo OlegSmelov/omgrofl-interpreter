@@ -1,8 +1,6 @@
 package omgrofl.interpreter;
 
 import omgrofl.Globals;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
