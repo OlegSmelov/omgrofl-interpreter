@@ -31,8 +31,8 @@ public class SimpleCondition implements Condition {
         Object rightObject = right.evaluate();
 
         if (leftObject instanceof Integer && rightObject instanceof Integer) {
-            int leftValue = ((Integer) leftObject).intValue();
-            int rightValue = ((Integer) rightObject).intValue();
+            int leftValue = (Integer) leftObject;
+            int rightValue = (Integer) rightObject;
 
             switch (operation) {
                 case EQUAL:

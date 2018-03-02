@@ -23,7 +23,7 @@ public class SleepCommand extends Command {
         Object durationObject = parameter.evaluate();
         if (durationObject instanceof Integer) {
             try {
-                int duration = ((Integer) durationObject).intValue();
+                int duration = (Integer) durationObject;
                 Thread.sleep(duration);
             } catch (InterruptedException e) {
             }
