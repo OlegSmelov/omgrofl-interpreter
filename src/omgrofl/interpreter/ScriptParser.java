@@ -73,20 +73,6 @@ public class ScriptParser {
         return new Script(commandSequence);
     }
     
-    public Script parse(File input, Memory memory) throws FileNotFoundException, ScriptParseException {
-        linesParsed = 0;
-        Scanner scanner = new Scanner(input);
-        CommandSequence commandSequence = parseSequence(scanner, memory);
-        return new Script(commandSequence);
-    }
-    
-    public Script parse(String input, Memory memory) throws ScriptParseException {
-        linesParsed = 0;
-        Scanner scanner = new Scanner(input);
-        CommandSequence commandSequence = parseSequence(scanner, memory);
-        return new Script(commandSequence);
-    }
-    
     /**
      * Throws an exception if scanner still has tokens.
      */
