@@ -1,18 +1,18 @@
 package omgrofl.interpreter.exceptions;
 
 public class ScriptParseException extends Exception {
-    
+
     private Integer line;
-    
+
     public ScriptParseException() {
         super();
         line = null;
     }
-    
+
     public ScriptParseException(String message) {
         super(message);
     }
-    
+
     public ScriptParseException(Integer line, String message) {
         super(message);
         this.line = line;
@@ -28,9 +28,10 @@ public class ScriptParseException extends Exception {
 
     @Override
     public String toString() {
-        if (line == null)
+        if (line == null) {
             return getMessage();
-        else
+        } else {
             return "Line " + line + ": " + getMessage();
+        }
     }
 }

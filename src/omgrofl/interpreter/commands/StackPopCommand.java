@@ -18,7 +18,7 @@ public class StackPopCommand extends Command {
     public Variable getVariable() {
         return variable;
     }
-    
+
     @Override
     public void execute() {
         variable.setValue(memory.removeFirst());

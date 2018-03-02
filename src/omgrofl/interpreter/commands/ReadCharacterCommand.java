@@ -9,7 +9,7 @@ import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
 public class ReadCharacterCommand extends Command {
-    
+
     protected Variable variable;
 
     public ReadCharacterCommand(Variable variable) {

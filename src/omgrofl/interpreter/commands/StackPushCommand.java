@@ -23,7 +23,7 @@ public class StackPushCommand extends Command {
     public void execute() {
         memory.addFirst(variable.getValue());
     }
-    
+
     @Override
     public String toString() {
         return Globals.stackPushOperator + " " + variable.getName();

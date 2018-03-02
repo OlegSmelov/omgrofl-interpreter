@@ -1,13 +1,13 @@
 package omgrofl.interpreter.exceptions;
 
 public class ScriptRuntimeException extends RuntimeException {
-    
+
     private Integer line = null;
 
     public ScriptRuntimeException(String message) {
         super(message);
     }
-    
+
     public ScriptRuntimeException(Integer line, String message) {
         this(message);
         this.line = line;
@@ -16,7 +16,7 @@ public class ScriptRuntimeException extends RuntimeException {
     public ScriptRuntimeException() {
         super();
     }
-    
+
     public Integer getLine() {
         return line;
     }
@@ -27,9 +27,10 @@ public class ScriptRuntimeException extends RuntimeException {
 
     @Override
     public String toString() {
-        if (line == null)
+        if (line == null) {
             return getMessage();
-        else
+        } else {
             return "Line " + line + ": " + getMessage();
+        }
     }
 }

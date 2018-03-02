@@ -9,7 +9,7 @@ import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
 public class ConditionCommand extends Command {
-    
+
     protected Condition condition;
     protected CommandSequence commandSequence;
 
@@ -29,16 +29,17 @@ public class ConditionCommand extends Command {
     @Override
     public void execute() throws ScriptInterruptedException, ScriptExitException {
         boolean conditionValue;
-        
+
         try {
             conditionValue = condition.evaluate();
         } catch (ScriptRuntimeException exception) {
             exception.setLine(sourceCodeLine);
             throw exception;
         }
-        
-        if (conditionValue)
+
+        if (conditionValue) {
             commandSequence.run();
+        }
     }
 
     @Override

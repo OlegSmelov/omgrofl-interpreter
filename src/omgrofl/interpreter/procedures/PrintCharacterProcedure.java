@@ -7,7 +7,7 @@ import omgrofl.interpreter.Parameter;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
 public class PrintCharacterProcedure extends AbstractProcedure {
-    
+
     private PrintStream printStream;
 
     public PrintCharacterProcedure() {
@@ -18,7 +18,7 @@ public class PrintCharacterProcedure extends AbstractProcedure {
             printStream = System.out;
         }
     }
-    
+
     @Override
     public String getName() {
         return Globals.printCharacterOperator;
@@ -27,17 +27,18 @@ public class PrintCharacterProcedure extends AbstractProcedure {
     @Override
     public Object execute() {
         requireNumberOfParameters(1);
-        
+
         Parameter parameter = parameters.get(0);
         Object value = parameter.evaluate();
-        
-        if (value instanceof Character)
+
+        if (value instanceof Character) {
             System.out.print((Character) value);
-        else if (value instanceof Integer) {
+        } else if (value instanceof Integer) {
             Character charValue = (char) ((Integer) value).intValue();
             printStream.print(charValue);
-        } else
+        } else {
             throw new ScriptRuntimeException("parameter is not a character");
+        }
 
         return null;
     }

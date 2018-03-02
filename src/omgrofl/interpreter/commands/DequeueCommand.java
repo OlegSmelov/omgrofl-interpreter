@@ -23,7 +23,7 @@ public class DequeueCommand extends Command {
     public void execute() {
         variable.setValue(memory.removeLast());
     }
-    
+
     @Override
     public String toString() {
         return Globals.dequeueOperator + " " + variable.getName();

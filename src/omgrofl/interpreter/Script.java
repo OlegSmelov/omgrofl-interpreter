@@ -5,13 +5,13 @@ import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 import omgrofl.interpreter.exceptions.ScriptRuntimeException;
 
 public class Script {
-    
+
     protected CommandSequence commandSequence;
 
     public Script(CommandSequence commandSequence) {
         this.commandSequence = commandSequence;
     }
-    
+
     public void run() throws ScriptRuntimeException {
         try {
             commandSequence.run();

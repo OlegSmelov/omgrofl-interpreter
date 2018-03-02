@@ -4,6 +4,7 @@ import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 
 public abstract class Command {
+
     protected Integer sourceCodeLine = null;
 
     public Integer getSourceCodeLine() {

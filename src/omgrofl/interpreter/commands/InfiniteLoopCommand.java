@@ -7,7 +7,7 @@ import omgrofl.interpreter.exceptions.ScriptExitException;
 import omgrofl.interpreter.exceptions.ScriptInterruptedException;
 
 public class InfiniteLoopCommand extends Command {
-    
+
     protected CommandSequence script;
 
     public InfiniteLoopCommand(CommandSequence script) {
@@ -21,8 +21,9 @@ public class InfiniteLoopCommand extends Command {
     @Override
     public void execute() throws ScriptExitException {
         try {
-            while (true)
+            while (true) {
                 script.run();
+            }
         } catch (ScriptInterruptedException e) {
             // do nothing, this is normal
         }
@@ -30,8 +31,8 @@ public class InfiniteLoopCommand extends Command {
 
     @Override
     public String toString() {
-        return Globals.loopOperator + "\n" +
-                Globals.indent(script.toString()) +
-                Globals.endOperator;
+        return Globals.loopOperator + "\n"
+                + Globals.indent(script.toString())
+                + Globals.endOperator;
     }
 }

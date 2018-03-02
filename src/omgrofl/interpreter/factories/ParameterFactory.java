@@ -8,13 +8,14 @@ import omgrofl.interpreter.parameters.ProcedureParameter;
 import omgrofl.interpreter.parameters.VariableParameter;
 
 public class ParameterFactory {
-    
+
     public Parameter getParameter(Object value) {
-        if (value instanceof Procedure)
+        if (value instanceof Procedure) {
             return new ProcedureParameter((Procedure) value);
-        else if (value instanceof Variable)
+        } else if (value instanceof Variable) {
             return new VariableParameter((Variable) value);
-        else
+        } else {
             return new ObjectParameter(value);
+        }
     }
 }
