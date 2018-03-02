@@ -46,8 +46,8 @@ public class Main {
         Memory memory = new Memory();
 
         try {
-            InputStream source = (parameters.inputFile != null)
-                    ? new FileInputStream(parameters.inputFile)
+            InputStream source = (parameters.inputFiles != null)
+                    ? new FileInputStream(parameters.inputFiles.get(0))
                     : System.in;
 
             Script script = scriptParser.parse(source, memory);

@@ -31,7 +31,7 @@ ant
 Run an example:
 ```
 cd dist
-java -jar Omgrofl.jar -f ../examples/alphabet.omgrofl
+java -jar Omgrofl.jar ../examples/alphabet.omgrofl
 ```
 
 Currently supported statements
