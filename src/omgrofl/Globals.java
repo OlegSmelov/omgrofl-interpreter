@@ -10,6 +10,8 @@ public class Globals {
     public static final String endOperator = "brb";
     public static final String commentOperator = "w00t";
     public static final String loopOperator = "rtfm";
+    public static final String forLoopOperator = "4";
+    public static final String toOperator = "2";
     public static final String printCharacterOperator = "rofl";
     public static final String readCharacterOperator = "stfw";
     public static final String exitOperator = "stfu";

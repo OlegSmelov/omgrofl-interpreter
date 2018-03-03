@@ -137,6 +137,92 @@ public class ScriptParser {
                 InfiniteLoopCommand loop = new InfiniteLoopCommand(loopCommandSequence);
                 script.addCommand(loop, linesParsed);
 
+            } else if (commandName.equalsIgnoreCase(Globals.forLoopOperator)) {
+                try {
+                    String varName = lineScanner.next();
+                    if (!varName.toLowerCase().matches(Globals.variablePattern)) {
+                        throw new ScriptParseException(
+                                linesParsed,
+                                "Invalid variable name " + varName);
+                    }
+
+                    String assignmentOp = lineScanner.next();
+                    if (!assignmentOp.equals(Globals.isOperator)) {
+                        throw new ScriptParseException(
+                                linesParsed,
+                                "Expected " + Globals.isOperator + ", found " + assignmentOp);
+                    }
+                    
+                    Parameter initialValueParameter;
+
+                    String initialValue = lineScanner.next();
+                    if (initialValue.toLowerCase().matches(Globals.numberPattern)) {
+                        Integer initialValueInt = Integer.parseInt(initialValue);
+                        
+                        if (!Globals.validValue(initialValueInt)) {
+                            throw new ScriptParseException(
+                                    linesParsed,
+                                    "Value " + initialValueInt + " is out of bounds (" + Globals.minAllowedValue
+                                    + "-" + Globals.maxAllowedValue + ")");
+                        }
+                        
+                        initialValueParameter = parameterFactory.getParameter(initialValueInt);
+                    } else if (initialValue.toLowerCase().matches(Globals.variablePattern)) {
+                        Variable variable = new Variable(memory, initialValue);
+                        initialValueParameter = parameterFactory.getParameter(variable);
+                    } else {
+                        throw new ScriptParseException(
+                                linesParsed,
+                                "Value " + initialValue + " has to be a variable or an integer");
+                    }
+
+                    String toOp = lineScanner.next();
+                    if (!toOp.equals(Globals.toOperator)) {
+                        throw new ScriptParseException(
+                                linesParsed,
+                                "Expected " + Globals.toOperator + ", found " + toOp);
+                    }
+
+                    Parameter endValueParameter;
+
+                    String endValue = lineScanner.next();
+                    if (endValue.toLowerCase().matches(Globals.numberPattern)) {
+                        Integer endValueInt = Integer.parseInt(endValue);
+                        
+                        if (!Globals.validValue(endValueInt)) {
+                            throw new ScriptParseException(
+                                    linesParsed,
+                                    "Value " + endValueInt + " is out of bounds (" + Globals.minAllowedValue
+                                    + "-" + Globals.maxAllowedValue + ")");
+                        }
+                        
+                        endValueParameter = parameterFactory.getParameter(endValueInt);
+                    } else if (endValue.toLowerCase().matches(Globals.variablePattern)) {
+                        Variable variable = new Variable(memory, endValue);
+                        endValueParameter = parameterFactory.getParameter(variable);
+                    } else {
+                        throw new ScriptParseException(
+                                linesParsed,
+                                "Value " + endValue + " has to be a variable or an integer");
+                    }
+
+                    checkEnd(lineScanner);
+
+                    // for loop
+                    Variable variable = new Variable(memory, varName);
+                    CommandSequence loopCommandSequence = parseSequence(scanner, memory, false);
+
+                    ForLoopCommand loop = new ForLoopCommand(
+                            variable,
+                            initialValueParameter,
+                            endValueParameter,
+                            loopCommandSequence
+                    );
+                    
+                    script.addCommand(loop, linesParsed);
+                } catch (NoSuchElementException e) {
+                    throw new ScriptParseException(linesParsed, "Missing operands");
+                }
             } else if (commandName.toLowerCase().matches(Globals.variablePattern)) {
                 String varName = commandName;
 

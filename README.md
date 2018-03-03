@@ -41,6 +41,7 @@ Currently supported statements
 + Char output (rofl *variable*)
 + Char input (stfw *variable*)
 + Infinite loop (rtfm ... brb)
++ For loop (4 *variable* iz *variable/value* 2 *variable/value* ... brb)
 + Loop break (tldr)
 + Comments (w00t)
 + Sleep (afk *variable/value*)
