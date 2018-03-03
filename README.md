@@ -1,6 +1,8 @@
 Omgrofl-interpteter
 ===================
 
+[![Build Status](https://travis-ci.org/OlegSmelov/omgrofl-interpreter.svg?branch=master)](https://travis-ci.org/OlegSmelov/omgrofl-interpreter)
+
 Omgrofl interpreter written in Java
 
 About
