@@ -1,8 +1,5 @@
 package omgrofl;
 
-import omgrofl.cl.JCommanderParameters;
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -22,32 +19,22 @@ public class Main {
         int RUNTIME_ERROR = 3;
     }
 
-    private static void printUsageToStderr(JCommander jCommander) {
-        StringBuilder usageMessage = new StringBuilder();
-        jCommander.usage(usageMessage);
-        System.err.println(usageMessage.toString());
-    }
-
     public static void main(String[] args) {
-        JCommanderParameters parameters = new JCommanderParameters();
+        InputStream source = System.in;
 
-        JCommander jCommander = new JCommander(parameters);
-        try {
-            jCommander.parse(args);
-        } catch (ParameterException e) {
-            System.err.println("Error: " + e.getMessage());
-            printUsageToStderr(jCommander);
-            return;
+        if (args.length > 0) {
+            try {
+                source = new FileInputStream(args[0]);
+            } catch (FileNotFoundException e) {
+                System.err.println("File not found: " + e);
+                System.exit(ExitCodes.FILE_NOT_FOUND);
+            }
         }
 
         ScriptParser scriptParser = new ScriptParser();
         Memory memory = new Memory();
 
         try {
-            InputStream source = (parameters.inputFiles != null)
-                    ? new FileInputStream(parameters.inputFiles.get(0))
-                    : System.in;
-
             Script script = scriptParser.parse(source, memory);
 
             script.run();
@@ -57,9 +44,6 @@ public class Main {
         } catch (ScriptRuntimeException e) {
             System.err.println("Runtime exception: " + e);
             System.exit(ExitCodes.RUNTIME_ERROR);
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found");
-            System.exit(ExitCodes.FILE_NOT_FOUND);
         }
     }
 }
