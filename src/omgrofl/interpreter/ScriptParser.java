@@ -152,7 +152,10 @@ public class ScriptParser {
                         if (value.toLowerCase().matches(Globals.numberPattern)) {
                             newValue = Integer.parseInt(value);
                             if (!Globals.validValue(newValue)) {
-                                throw new ScriptParseException(linesParsed, "Unacceptable value: " + newValue);
+                                throw new ScriptParseException(
+                                        linesParsed,
+                                        "Value " + newValue + " is out of bounds (" + Globals.minAllowedValue
+                                        + "-" + Globals.maxAllowedValue + ")");
                             }
                             valueParameter = parameterFactory.getParameter(newValue);
                         } else if (value.toLowerCase().matches(Globals.variablePattern)) {
