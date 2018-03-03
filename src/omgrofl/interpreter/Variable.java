@@ -1,5 +1,7 @@
 package omgrofl.interpreter;
 
+import omgrofl.interpreter.exceptions.ScriptRuntimeException;
+
 public class Variable {
 
     protected Memory memory;
@@ -11,7 +13,12 @@ public class Variable {
     }
 
     public Object getValue() {
-        return memory.getVariable(name.toLowerCase());
+        Object value = memory.getVariable(name.toLowerCase());
+        if (value == null) {
+            throw new ScriptRuntimeException(
+                    "Attempt to read uninitialized variable " + name);
+        }
+        return value;
     }
 
     public String getName() {
