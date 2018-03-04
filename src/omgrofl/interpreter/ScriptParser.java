@@ -15,6 +15,20 @@ public class ScriptParser {
 
     private int linesParsed;
 
+    public Script parse(InputStream input, Memory memory) throws ScriptParseException {
+        linesParsed = 0;
+        Scanner scanner = new Scanner(input);
+        CommandSequence commandSequence = parseSequence(scanner, memory);
+        return new Script(commandSequence);
+    }
+
+    public Script parse(String input, Memory memory) throws ScriptParseException {
+        linesParsed = 0;
+        Scanner scanner = new Scanner(input);
+        CommandSequence commandSequence = parseSequence(scanner, memory);
+        return new Script(commandSequence);
+    }
+
     private Variable readVariable(Memory memory, Scanner scanner) throws ScriptParseException {
         try {
             String variableName = scanner.next();
@@ -67,13 +81,6 @@ public class ScriptParser {
         }
     }
 
-    public Script parse(InputStream input, Memory memory) throws ScriptParseException {
-        linesParsed = 0;
-        Scanner scanner = new Scanner(input);
-        CommandSequence commandSequence = parseSequence(scanner, memory);
-        return new Script(commandSequence);
-    }
-
     /**
      * Throws an exception if scanner still has tokens.
      */
@@ -85,14 +92,14 @@ public class ScriptParser {
     }
 
     private CommandSequence parseSequence(Scanner scanner, Memory memory) throws ScriptParseException {
-        return parseSequence(scanner, memory, true);
+        return parseSequence(scanner, memory, true, false);
     }
 
     /**
      * @param isRoot root is being parsed (not statements inside a loop and
      * such).
      */
-    private CommandSequence parseSequence(Scanner scanner, Memory memory, boolean isRoot)
+    private CommandSequence parseSequence(Scanner scanner, Memory memory, boolean isRoot, boolean insideLoop)
             throws ScriptParseException {
         CommandSequence script = new CommandSequence();
         ParameterFactory parameterFactory = new ParameterFactory();
@@ -133,7 +140,7 @@ public class ScriptParser {
                 checkEnd(lineScanner);
 
                 // infinite loop (until broken)
-                CommandSequence loopCommandSequence = parseSequence(scanner, memory, false);
+                CommandSequence loopCommandSequence = parseSequence(scanner, memory, false, true);
                 InfiniteLoopCommand loop = new InfiniteLoopCommand(loopCommandSequence);
                 script.addCommand(loop, linesParsed);
 
@@ -152,20 +159,20 @@ public class ScriptParser {
                                 linesParsed,
                                 "Expected " + Globals.isOperator + ", found " + assignmentOp);
                     }
-                    
+
                     Parameter initialValueParameter;
 
                     String initialValue = lineScanner.next();
                     if (initialValue.toLowerCase().matches(Globals.numberPattern)) {
                         Integer initialValueInt = Integer.parseInt(initialValue);
-                        
+
                         if (!Globals.validValue(initialValueInt)) {
                             throw new ScriptParseException(
                                     linesParsed,
                                     "Value " + initialValueInt + " is out of bounds (" + Globals.minAllowedValue
                                     + "-" + Globals.maxAllowedValue + ")");
                         }
-                        
+
                         initialValueParameter = parameterFactory.getParameter(initialValueInt);
                     } else if (initialValue.toLowerCase().matches(Globals.variablePattern)) {
                         Variable variable = new Variable(memory, initialValue);
@@ -188,14 +195,14 @@ public class ScriptParser {
                     String endValue = lineScanner.next();
                     if (endValue.toLowerCase().matches(Globals.numberPattern)) {
                         Integer endValueInt = Integer.parseInt(endValue);
-                        
+
                         if (!Globals.validValue(endValueInt)) {
                             throw new ScriptParseException(
                                     linesParsed,
                                     "Value " + endValueInt + " is out of bounds (" + Globals.minAllowedValue
                                     + "-" + Globals.maxAllowedValue + ")");
                         }
-                        
+
                         endValueParameter = parameterFactory.getParameter(endValueInt);
                     } else if (endValue.toLowerCase().matches(Globals.variablePattern)) {
                         Variable variable = new Variable(memory, endValue);
@@ -210,7 +217,7 @@ public class ScriptParser {
 
                     // for loop
                     Variable variable = new Variable(memory, varName);
-                    CommandSequence loopCommandSequence = parseSequence(scanner, memory, false);
+                    CommandSequence loopCommandSequence = parseSequence(scanner, memory, false, true);
 
                     ForLoopCommand loop = new ForLoopCommand(
                             variable,
@@ -218,7 +225,7 @@ public class ScriptParser {
                             endValueParameter,
                             loopCommandSequence
                     );
-                    
+
                     script.addCommand(loop, linesParsed);
                 } catch (NoSuchElementException e) {
                     throw new ScriptParseException(linesParsed, "Missing operands");
@@ -265,7 +272,7 @@ public class ScriptParser {
                 script.addCommand(assignmentCommand, linesParsed);
 
             } else if (commandName.equalsIgnoreCase(Globals.breakOperator)) {
-                if (isRoot) {
+                if (!insideLoop) {
                     throw new ScriptParseException(linesParsed, "Break operator outside of a loop is not allowed");
                 }
                 BreakCommand breakCommand = new BreakCommand();
@@ -381,7 +388,7 @@ public class ScriptParser {
                     }
 
                     Condition condition = new SimpleCondition(leftParameter, rightParameter, operation);
-                    CommandSequence conditionCommandSequence = parseSequence(scanner, memory, false);
+                    CommandSequence conditionCommandSequence = parseSequence(scanner, memory, false, insideLoop);
 
                     ConditionCommand command = new ConditionCommand(condition, conditionCommandSequence);
                     script.addCommand(command, linesParsed);
