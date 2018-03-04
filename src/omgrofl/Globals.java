@@ -3,7 +3,7 @@ package omgrofl;
 import java.util.Scanner;
 
 public class Globals {
-    public static final String numberPattern = "^[0-9]+$";
+    public static final String numberPattern = "^-?[0-9]+$";
     public static final String variablePattern = "^l[o]+l$";
     
     public static final String breakOperator = "tldr";
